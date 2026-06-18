@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taming a Feynman integral — Giulio Salvatori</title>
+<meta name="description" content="A scroll-through of the tropical subtraction scheme and the SubTropica package: how tropical geometry sorts the divergences of a Feynman integral into a finite, computable list.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF6EE; --ink:#2A2521; --inksoft:#6E6358; --inkfaint:#A99E8E;
+    --clay:#C2693F; --claydeep:#A8542F; --line:#E8DDCC; --wash:#F3EADC; --chip:#EFE0D2;
+    --serif:'Fraunces',Georgia,serif; --sans:'Inter',-apple-system,Segoe UI,Helvetica,Arial,sans-serif;
+    --maxw:980px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+    font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;}
+  a{color:var(--claydeep); text-decoration:none;} a:hover{color:var(--clay);}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px;}
+
+  nav{position:sticky; top:0; z-index:50; backdrop-filter:blur(8px);
+    background:color-mix(in srgb, var(--paper) 86%, transparent); border-bottom:1px solid var(--line);}
+  nav .wrap{display:flex; align-items:center; justify-content:space-between; height:56px;}
+  nav .brand{font-family:var(--serif); font-weight:500; font-size:18px; letter-spacing:-.01em;}
+  nav .links{display:flex; gap:22px; font-size:14px;}
+  nav .links a{color:var(--inksoft);} nav .links a:hover{color:var(--clay);}
+  nav .links a.active{color:var(--clay);}
+  @media(max-width:620px){ nav .links a:not(.active){display:none;} }
+
+  header.intro{padding:72px 0 8px;}
+  .eyebrow{font-size:12px; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--clay); margin:0 0 14px;}
+  h1{font-family:var(--serif); font-weight:380; font-size:46px; line-height:1.02; letter-spacing:-.015em;
+    margin:0; font-variation-settings:'SOFT' 60,'opsz' 144;}
+  .intro p{font-size:18px; color:var(--inksoft); max-width:60ch; margin:16px 0 0;}
+  @media(max-width:620px){ h1{font-size:36px;} }
+
+  /* scrollytelling */
+  .scrolly{position:relative; display:grid; grid-template-columns:1.05fr .95fr; gap:48px; margin-top:24px;}
+  .graphic{position:sticky; top:0; height:100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:14px;}
+  .stage{position:relative; width:min(420px,82%); aspect-ratio:1/1;}
+  .stage svg{position:absolute; inset:0; width:100%; height:100%; transition:opacity .3s ease;}
+  .caption{font-family:var(--serif); font-style:italic; color:var(--claydeep); font-size:15px; min-height:1.4em; text-align:center; transition:opacity .4s;}
+
+  .steps{padding:18vh 0 22vh;}
+  .step{min-height:82vh; display:flex; align-items:center;}
+  .step .card{background:linear-gradient(180deg,#fff7,var(--wash)); border:1px solid var(--line);
+    border-radius:16px; padding:22px 24px; opacity:.32; transform:translateY(8px);
+    transition:opacity .4s ease, transform .4s ease;}
+  .step.active .card{opacity:1; transform:none;}
+  .step .num{font-family:var(--serif); color:var(--clay); font-size:14px; letter-spacing:.02em;}
+  .step h3{font-family:var(--serif); font-weight:480; font-size:23px; margin:.25em 0 .35em; letter-spacing:-.01em;}
+  .step p{margin:.4em 0; color:var(--inksoft);}
+
+  @media(max-width:760px){
+    .scrolly{grid-template-columns:1fr; gap:0;}
+    .graphic{height:56vh; top:56px; background:linear-gradient(180deg,var(--paper),color-mix(in srgb,var(--paper) 80%,transparent));}
+    .steps{padding:4vh 0 18vh;}
+    .step{min-height:70vh;}
+  }
+
+  .closing{border-top:1px solid var(--line); padding:40px 0 12px; margin-top:8px;}
+  .closing h2{font-family:var(--serif); font-weight:440; font-size:26px; margin:.2em 0 .4em;}
+  .closing p{color:var(--inksoft); max-width:62ch;}
+  .papers{display:flex; flex-wrap:wrap; gap:10px; margin-top:18px;}
+  .papers a{display:inline-block; background:var(--chip); color:var(--claydeep);
+    border-radius:999px; padding:8px 15px; font-size:14px;}
+  .papers a:hover{background:var(--wash);}
+  .more{padding:18px 0 40px; color:var(--inkfaint); font-size:14.5px;}
+  footer{border-top:1px solid var(--line); padding:26px 0 48px; color:var(--inkfaint); font-size:13px;}
+  footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+  @media(prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} .stage svg,.step .card,.caption{transition:none;} }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="index.html">Giulio Salvatori</a>
+    <div class="links">
+      <a href="index.html#research">Research</a>
+      <a href="index.html#work">Selected work</a>
+      <a class="active" href="demos.html">Demos</a>
+      <a href="index.html#links">Links</a>
+    </div>
+  </div>
+</nav>
+
+<header class="intro">
+  <div class="wrap">
+    <p class="eyebrow">Demo · Tropical subtraction</p>
+    <h1>Taming a Feynman integral</h1>
+    <p>Feynman integrals are how we turn quantum field theory into numbers — but they are
+      riddled with infinities. Here is how tropical geometry sorts those infinities into a
+      finite, computable list, and how the <em>SubTropica</em> package does it for you. Scroll down.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="scrolly">
+    <!-- sticky visual -->
+    <div class="graphic">
+      <div class="stage">
+        <svg id="stage" viewBox="0 0 320 320" aria-hidden="true"></svg>
+      </div>
+      <div class="caption" id="caption">a one-loop bubble</div>
+    </div>
+
+    <!-- steps -->
+    <div class="steps" id="steps">
+      <div class="step" data-step="0">
+        <div class="card">
+          <div class="num">01</div>
+          <h3>Start with an integral</h3>
+          <p>To turn quantum field theory into a number — a cross-section, a decay rate — we
+            evaluate Feynman integrals. Take the simplest loop, a bubble. Its value is not
+            finite: somewhere inside, it diverges.</p>
+        </div>
+      </div>
+      <div class="step" data-step="1">
+        <div class="card">
+          <div class="num">02</div>
+          <h3>Trade momenta for parameters</h3>
+          <p>Rather than integrate over the loop momentum, rewrite the integral over
+            <em>Feynman parameters</em> — one per propagator — living on a simplex. The whole
+            integrand is built from two Symanzik polynomials, <em>U</em> and <em>F</em>.</p>
+        </div>
+      </div>
+      <div class="step" data-step="2">
+        <div class="card">
+          <div class="num">03</div>
+          <h3>Where the infinities hide</h3>
+          <p>The divergences are not scattered everywhere. They sit on the <em>boundary</em> of
+            the simplex, where Feynman parameters vanish. Work in <em>d</em>&nbsp;=&nbsp;4&nbsp;&minus;&nbsp;2&epsilon;
+            dimensions and each one surfaces as a pole in &epsilon;.</p>
+        </div>
+      </div>
+      <div class="step" data-step="3">
+        <div class="card">
+          <div class="num">04</div>
+          <h3>A polytope appears</h3>
+          <p>Which boundaries diverge, and how badly? The answer is combinatorial. Collect the
+            exponents of the Symanzik polynomials as lattice points, take their convex hull, and
+            you have a <strong>Newton polytope</strong>.</p>
+        </div>
+      </div>
+      <div class="step" data-step="4">
+        <div class="card">
+          <div class="num">05</div>
+          <h3>Tropicalize</h3>
+          <p>Its <em>normal fan</em> — the tropicalization of <em>U</em> and <em>F</em> — slices
+            the parameter space into cones. Each cone is one way the integral can blow up: a
+            single scaling region, with a single leading behaviour.</p>
+        </div>
+      </div>
+      <div class="step" data-step="5">
+        <div class="card">
+          <div class="num">06</div>
+          <h3>The subtraction scheme</h3>
+          <p>Now the move that names the paper. In each region, subtract a counterterm that
+            captures exactly that divergence and integrates in closed form. The fan tells you
+            which subtractions you need, and to what order. What remains is finite — safe to
+            integrate.</p>
+        </div>
+      </div>
+      <div class="step" data-step="6">
+        <div class="card">
+          <div class="num">07</div>
+          <h3>SubTropica</h3>
+          <p>Run the pipeline and the poles drop out as a Laurent series in &epsilon;,
+            coefficient by coefficient. <strong>SubTropica</strong> wraps it into a Mathematica
+            package: hand it a Feynman integral, get back its &epsilon;-expansion — tropical
+            geometry doing the bookkeeping.</p>
+        </div>
+      </div>
+      <div class="step" data-step="7">
+        <div class="card">
+          <div class="num">08</div>
+          <h3>Try it yourself</h3>
+          <p>SubTropica is open and documented. Point it at your own integral and watch the
+            &epsilon;-expansion come back — no tropical bookkeeping by hand.</p>
+          <p style="margin-top:12px;">
+            <a href="https://www.subtropica.org" target="_blank" rel="noopener"><strong>subtropica.org&nbsp;&rarr;</strong></a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="closing">
+    <h2>Why tropical geometry?</h2>
+    <p><em>Tropical</em> means keeping only the leading exponential behaviour — replacing sums
+      by maxima and products by sums. For a Feynman integral that coarse shadow is exactly the
+      data that controls its divergences. The two papers here turn the observation into a method:
+      <em>The Tropical Geometry of Subtraction Schemes</em> sets up the framework, and
+      <a href="https://www.subtropica.org" target="_blank" rel="noopener"><em>SubTropica</em></a>
+      (with M. Giroux &amp; S. Mizera) makes it run inside Mathematica.</p>
+    <div class="papers">
+      <a href="https://www.subtropica.org" target="_blank" rel="noopener">subtropica.org&nbsp;&rarr;</a>
+      <a href="https://arxiv.org/abs/2406.14606">Tropical Geometry of Subtraction Schemes · arXiv:2406.14606&nbsp;&rarr;</a>
+      <a href="https://arxiv.org/abs/2604.20954">SubTropica · arXiv:2604.20954&nbsp;&rarr;</a>
+    </div>
+    <p style="margin-top:18px;">
+      <a href="demos.html">&larr;&nbsp;Back to demos</a>
+      &nbsp;·&nbsp;
+      <a href="index.html#work">More of my work&nbsp;&rarr;</a>
+    </p>
+  </div>
+  <div class="more">
+    First draft — the physics narrative and the schematic figures are mine to tune. The page
+    reuses the dependency-free scrollytelling pattern (an <code>IntersectionObserver</code>
+    drives the sticky visual).
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr"></span> Giulio Salvatori</span>
+    <span><a href="index.html">Home</a> · Princeton, NJ</span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  const NS='http://www.w3.org/2000/svg';
+
+  // palette
+  const C_CLAY='#C2693F', C_DEEP='#A8542F', C_FAINT='#A99E8E',
+        C_WASH='#F3EADC', C_CHIP='#EFE0D2', C_PAPER='#FAF6EE',
+        C_INK='#2A2521', C_SOFT='#6E6358', C_LINE='#E8DDCC';
+
+  const stage=document.getElementById('stage');
+  function clear(){ while(stage.firstChild) stage.removeChild(stage.firstChild); }
+  function el(name,attrs){const e=document.createElementNS(NS,name);
+    for(const k in attrs) e.setAttribute(k,attrs[k]); return e;}
+  function add(...nodes){ nodes.forEach(n=>stage.appendChild(n)); }
+  function line(p,q,o){o=o||{};
+    return el('line',Object.assign({x1:p[0],y1:p[1],x2:q[0],y2:q[1],
+      stroke:o.stroke||C_DEEP,'stroke-width':o.w||1.6,'stroke-linecap':'round',
+      opacity:o.op!=null?o.op:1}, o.dash?{'stroke-dasharray':o.dash}:{}));}
+  function dot(p,r,fill,o){return el('circle',Object.assign({cx:p[0],cy:p[1],r:r,fill:fill},o||{}));}
+  function poly(pts,o){return el('polygon',Object.assign({points:pts.map(p=>p[0]+','+p[1]).join(' ')},o||{}));}
+  function txt(p,s,o){const t=el('text',Object.assign({x:p[0],y:p[1]},o||{})); t.textContent=s; return t;}
+  const LBL={fill:C_SOFT,'font-family':'Fraunces,serif','font-style':'italic','font-size':'14','text-anchor':'middle'};
+
+  const TRI=[[160,64],[64,248],[256,248]];
+
+  // 01 — one-loop bubble
+  function drawBubble(){
+    clear();
+    const yc=160;
+    add(line([40,yc],[110,yc],{stroke:C_DEEP,w:2}));
+    add(line([210,yc],[280,yc],{stroke:C_DEEP,w:2}));
+    add(el('path',{d:'M110,'+yc+' A50,50 0 0 1 210,'+yc, fill:'none', stroke:C_CLAY,'stroke-width':2.2}));
+    add(el('path',{d:'M110,'+yc+' A50,50 0 0 0 210,'+yc, fill:'none', stroke:C_CLAY,'stroke-width':2.2}));
+    add(dot([110,yc],4,C_DEEP), dot([210,yc],4,C_DEEP));
+  }
+
+  // 02 — Feynman-parameter simplex
+  function drawSimplex(showLabels){
+    clear();
+    add(poly(TRI,{fill:C_WASH,opacity:0.7}));
+    for(let i=0;i<3;i++) add(line(TRI[i],TRI[(i+1)%3],{stroke:C_CLAY,w:2}));
+    TRI.forEach(v=>add(dot(v,4,C_DEEP)));
+    if(showLabels){
+      add(txt([160,50],'x₁',LBL));
+      add(txt([46,262],'x₂',LBL));
+      add(txt([274,262],'x₃',LBL));
+    }
+  }
+
+  // 03 — divergences on the boundary
+  function drawDivergent(){
+    drawSimplex(false);
+    // glow the boundary, brightest at the corners
+    for(let i=0;i<3;i++) add(line(TRI[i],TRI[(i+1)%3],{stroke:C_CLAY,w:5,op:0.16}));
+    TRI.forEach(v=>{
+      add(dot(v,16,C_CLAY,{opacity:0.16}));
+      add(dot(v,9,C_CLAY,{opacity:0.30}));
+      add(dot(v,4,C_DEEP));
+    });
+    add(txt([160,300],'xᵢ → 0',LBL));
+  }
+
+  // Newton polytope (lattice + hull) and, optionally, its normal fan
+  const HULL=[[0,0],[3,0],[4,2],[2,4],[0,3]];
+  const S=34, OX=92, OY=238;
+  const lat=(u,v)=>[OX+u*S, OY-v*S];
+  function perpOutward(p,q,Cx,Cy){
+    const mx=(p[0]+q[0])/2, my=(p[1]+q[1])/2;
+    let nx=-(q[1]-p[1]), ny=(q[0]-p[0]);
+    const len=Math.hypot(nx,ny)||1; nx/=len; ny/=len;
+    if((mx-Cx)*nx+(my-Cy)*ny<0){ nx=-nx; ny=-ny; }
+    return {nx,ny};
+  }
+  function drawNewton(showFan){
+    clear();
+    const hull=HULL.map(p=>lat(p[0],p[1]));
+    const cx=hull.reduce((s,p)=>s+p[0],0)/hull.length;
+    const cy=hull.reduce((s,p)=>s+p[1],0)/hull.length;
+    if(showFan){
+      const dirs=hull.map((p,i)=>{
+        const o=perpOutward(p,hull[(i+1)%hull.length],cx,cy);
+        return Object.assign(o,{a:Math.atan2(o.ny,o.nx)});
+      }).sort((A,B)=>A.a-B.a);
+      const RAD=180;
+      for(let i=0;i<dirs.length;i++){
+        const d0=dirs[i], d1=dirs[(i+1)%dirs.length];
+        const p0=[cx+d0.nx*RAD, cy+d0.ny*RAD];
+        const p1=[cx+d1.nx*RAD, cy+d1.ny*RAD];
+        add(poly([[cx,cy],p0,p1],{fill: i%2? C_WASH:C_CHIP, opacity:0.6}));
+      }
+      dirs.forEach(d=>add(line([cx,cy],[cx+d.nx*RAD,cy+d.ny*RAD],{stroke:C_CLAY,w:1.2,op:0.7,dash:'3 4'})));
+    }
+    // faint lattice (the monomials)
+    for(let u=0;u<=4;u++) for(let v=0;v<=4;v++) add(dot(lat(u,v),1.6,C_FAINT,{opacity:0.55}));
+    // the polytope, masking the centre of the fan
+    add(poly(hull,{fill:C_PAPER, opacity: showFan?0.92:0.82}));
+    for(let i=0;i<hull.length;i++) add(line(hull[i],hull[(i+1)%hull.length],{stroke:C_CLAY,w:2}));
+    hull.forEach(p=>add(dot(p,3.6,C_DEEP)));
+  }
+
+  // 06 — subtract, region by region
+  function drawSubtraction(){
+    clear();
+    const g=[(TRI[0][0]+TRI[1][0]+TRI[2][0])/3,(TRI[0][1]+TRI[1][1]+TRI[2][1])/3];
+    const fills=[C_WASH,C_CHIP,'#F7EFE3'];
+    for(let i=0;i<3;i++) add(poly([TRI[i],TRI[(i+1)%3],g],{fill:fills[i],opacity:0.9}));
+    for(let i=0;i<3;i++) add(line(TRI[i],g,{stroke:C_DEEP,w:1.2,op:0.5,dash:'4 4'}));
+    for(let i=0;i<3;i++) add(line(TRI[i],TRI[(i+1)%3],{stroke:C_CLAY,w:2}));
+    TRI.forEach(v=>add(dot(v,4,C_DEEP)));
+    // one region's counterterm peeling away
+    const region=[TRI[0],TRI[1],g];
+    add(poly(region.map(p=>[p[0]+16,p[1]-16]),{fill:'none',stroke:C_DEEP,'stroke-width':1.4,'stroke-dasharray':'3 4',opacity:0.65}));
+    add(dot(TRI[0],14,C_CLAY,{opacity:0.18}));
+    add(txt([232,116],'−',{fill:C_DEEP,'font-family':'Fraunces,serif','font-size':'30','font-weight':'500','text-anchor':'middle'}));
+  }
+
+  // a clickable pill linking out to the package site
+  const SUB_URL='https://www.subtropica.org';
+  function linkPill(x,y,w,h,label,o){o=o||{};
+    const a=el('a',{href:SUB_URL,target:'_blank',rel:'noopener'});
+    a.setAttribute('aria-label','Open subtropica.org');
+    a.style.cursor='pointer';
+    a.appendChild(el('rect',{x:x,y:y,width:w,height:h,rx:h/2,fill:o.fill||C_CHIP}));
+    const t=el('text',{x:x+w/2,y:y+h/2+(o.fs||15)*0.34,fill:o.color||C_DEEP,
+      'font-family':'Fraunces,serif','font-style':o.italic===false?'normal':'italic',
+      'font-size':String(o.fs||15),'text-anchor':'middle'});
+    t.textContent=label; a.appendChild(t);
+    return a;
+  }
+
+  // the heptagon signature motif (a vertex of the associahedron)
+  function heptagonGroup(){
+    const g=el('g',{transform:'translate(96,38) scale(1.28)'});
+    g.appendChild(el('polygon',{points:'50,6 88,26 95,66 68,95 32,95 5,66 12,26',
+      stroke:C_CLAY,'stroke-width':1.1,fill:C_WASH,'stroke-linejoin':'round'}));
+    const chords=el('g',{stroke:C_CLAY,'stroke-width':0.9,opacity:'0.6'});
+    [['50','6','32','95'],['50','6','68','95'],['50','6','5','66'],['50','6','95','66']]
+      .forEach(c=>chords.appendChild(el('line',{x1:c[0],y1:c[1],x2:c[2],y2:c[3]})));
+    g.appendChild(chords);
+    const verts=el('g',{fill:C_CLAY});
+    [['50','6'],['88','26'],['95','66'],['68','95'],['32','95'],['5','66'],['12','26']]
+      .forEach(v=>verts.appendChild(el('circle',{cx:v[0],cy:v[1],r:'2.1'})));
+    g.appendChild(verts);
+    return g;
+  }
+
+  // 07 — the epsilon-expansion
+  function drawResult(){
+    clear();
+    add(el('rect',{x:48,y:104,width:224,height:112,rx:16,fill:C_PAPER,stroke:C_LINE,'stroke-width':1.5}));
+    add(txt([160,138],'I(ε)  =',{fill:C_SOFT,'font-family':'Inter,sans-serif','font-size':'13','text-anchor':'middle','letter-spacing':'.04em'}));
+    add(txt([160,170],'c₋₂/ε² + c₋₁/ε + c₀ + …',
+      {fill:C_INK,'font-family':'Fraunces,serif','font-size':'19','text-anchor':'middle'}));
+    add(linkPill(106,230,108,30,'SubTropica'));
+  }
+
+  // 08 — the call to action
+  function drawFinal(){
+    clear();
+    add(heptagonGroup());
+    add(linkPill(76,210,168,44,'subtropica.org →',{fill:C_CLAY,color:C_PAPER,fs:17,italic:false}));
+    add(txt([160,284],'the package, online',LBL));
+  }
+
+  // ---- step driver ----
+  const captions=[
+    'a one-loop bubble',
+    'the Feynman-parameter simplex',
+    'divergences live on the boundary',
+    'the Newton polytope',
+    'its normal fan — one cone per scaling region',
+    'subtract, region by region',
+    'the ε-expansion, computed',
+    'subtropica.org — try it yourself'
+  ];
+  const caption=document.getElementById('caption');
+  const draws=[
+    ()=>drawBubble(),
+    ()=>drawSimplex(true),
+    ()=>drawDivergent(),
+    ()=>drawNewton(false),
+    ()=>drawNewton(true),
+    ()=>drawSubtraction(),
+    ()=>drawResult(),
+    ()=>drawFinal()
+  ];
+  function setStep(n){
+    caption.textContent = captions[n] || '';
+    (draws[n] || draws[0])();
+  }
+  setStep(0);
+
+  const steps=[...document.querySelectorAll('.step')];
+  let current=0;
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const n=+e.target.dataset.step;
+        steps.forEach(s=>s.classList.toggle('active', s===e.target));
+        if(n!==current){ current=n; setStep(n); }
+      }
+    });
+  }, {rootMargin:'-45% 0px -45% 0px', threshold:0});
+  steps.forEach(s=>io.observe(s));
+</script>
+</body>
+</html>
