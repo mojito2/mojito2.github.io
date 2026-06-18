@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Giulio Salvatori — Curriculum Vitae</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Local variable fonts for high-fidelity print rendering; Google Fonts link above
+   covers the same families when this file is opened in a browser. */
+@font-face{
+  font-family:'FrauncesLocal';
+  src:local('Fraunces'), url('file:///home/claude/fonts/Fraunces.ttf') format('truetype');
+  font-weight:100 900; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'FrauncesLocal';
+  src:local('Fraunces'), url('file:///home/claude/fonts/Fraunces-Italic.ttf') format('truetype');
+  font-weight:100 900; font-style:italic; font-display:swap;
+}
+@font-face{
+  font-family:'InterLocal';
+  src:local('Inter'), url('file:///home/claude/fonts/Inter.ttf') format('truetype');
+  font-weight:100 900; font-style:normal; font-display:swap;
+}
+@font-face{
+  font-family:'InterLocal';
+  src:local('Inter'), url('file:///home/claude/fonts/Inter-Italic.ttf') format('truetype');
+  font-weight:100 900; font-style:italic; font-display:swap;
+}
+
+:root{
+  --paper:#FAF6EE;
+  --ink:#2A2521;
+  --ink-soft:#6E6358;
+  --ink-faint:#A99E8E;
+  --clay:#C2693F;
+  --clay-deep:#A8542F;
+  --rule:#E8DDCC;
+  --wash:#F3EADC;
+  --serif:'FrauncesLocal','Fraunces',Georgia,'Times New Roman',serif;
+  --sans:'InterLocal','Inter',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:10.2px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+.page{
+  width:210mm;
+  min-height:297mm;
+  margin:0 auto;
+  padding:0 20mm;
+  background:var(--paper);
+}
+
+/* ---------- Header ---------- */
+.head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+}
+.head-left{flex:1 1 auto;min-width:0;}
+.name{
+  font-family:var(--serif);
+  font-weight:380;
+  font-variation-settings:'SOFT' 60,'opsz' 144,'WONK' 1;
+  font-size:40px;
+  line-height:0.98;
+  letter-spacing:-0.012em;
+  color:var(--ink);
+  margin:0;
+}
+.name .dot{color:var(--clay);}
+.tagline{
+  font-family:var(--serif);
+  font-style:italic;
+  font-weight:340;
+  font-variation-settings:'SOFT' 50,'opsz' 40;
+  font-size:13.5px;
+  color:var(--clay-deep);
+  margin:9px 0 0;
+  letter-spacing:0.002em;
+}
+.intro{
+  font-size:10.4px;
+  color:var(--ink-soft);
+  max-width:118mm;
+  margin:11px 0 0;
+  line-height:1.62;
+}
+.contact{
+  margin-top:12px;
+  font-size:9px;
+  letter-spacing:0.02em;
+  color:var(--ink-soft);
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px 0;
+  align-items:center;
+}
+.contact span{white-space:nowrap;}
+.contact .sep{color:var(--clay);margin:0 8px;}
+
+/* signature motif: a triangulated polygon — the combinatorial seed of an
+   associahedron, the object at the centre of Giulio's amplitudes work */
+.mark{flex:0 0 auto;width:96px;height:96px;margin-top:2px;}
+
+/* ---------- Section scaffold ---------- */
+.section{margin-top:16px;}
+.section:first-of-type{margin-top:20px;}
+.label{
+  font-size:8.4px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--clay);
+  margin:0 0 9px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  break-after:avoid;
+}
+.label::after{
+  content:"";
+  flex:1 1 auto;
+  height:1px;
+  background:var(--rule);
+}
+
+/* ---------- Ledger rows ---------- */
+.row{
+  display:grid;
+  grid-template-columns:21mm 1fr;
+  gap:0 14px;
+  padding:4px 0;
+  break-inside:avoid;
+}
+.row + .row{border-top:1px solid var(--rule);}
+.when{
+  font-family:var(--serif);
+  font-weight:430;
+  font-variation-settings:'opsz' 30,'SOFT' 30;
+  font-size:11px;
+  color:var(--clay-deep);
+  line-height:1.35;
+  padding-top:0.5px;
+  white-space:nowrap;
+}
+.what .t{
+  font-weight:600;
+  color:var(--ink);
+  font-size:10.6px;
+  letter-spacing:0.002em;
+}
+.what .s{
+  color:var(--ink-soft);
+  font-size:9.9px;
+}
+.what .m{
+  color:var(--ink-faint);
+  font-size:9.4px;
+  font-style:italic;
+}
+.what .s + .s, .what .m{margin-top:1px;}
+.what .s, .what .m{display:block;}
+
+/* ---------- Publications ---------- */
+.pub-meta{
+  background:var(--wash);
+  border-radius:9px;
+  padding:9px 13px;
+  font-size:9.3px;
+  color:var(--ink-soft);
+  line-height:1.55;
+  margin-bottom:11px;
+  break-inside:avoid;
+}
+.pub-meta b{color:var(--clay-deep);font-weight:600;}
+ol.pubs{
+  margin:0;
+  padding:0;
+  list-style:none;
+  counter-reset:pub;
+}
+ol.pubs li{
+  position:relative;
+  padding:3.8px 0 3.8px 21mm;
+  break-inside:avoid;
+  line-height:1.46;
+}
+ol.pubs li + li{border-top:1px solid var(--rule);}
+ol.pubs li::before{
+  counter-increment:pub;
+  content:counter(pub,decimal-leading-zero);
+  position:absolute;
+  left:0;
+  top:5px;
+  font-family:var(--serif);
+  font-weight:430;
+  font-variation-settings:'opsz' 24;
+  font-size:10px;
+  color:var(--clay);
+  letter-spacing:0.01em;
+}
+ol.pubs li.star::before{content:counter(pub,decimal-leading-zero) " \2605";}
+ol.pubs .pt{color:var(--ink);font-weight:600;font-size:10.2px;}
+ol.pubs .pa{color:var(--ink-soft);font-size:9.6px;}
+ol.pubs .pv{color:var(--ink-faint);font-size:9.2px;font-style:italic;}
+.tagchip{
+  display:inline-block;
+  font-size:7.6px;
+  font-weight:600;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color:var(--clay-deep);
+  background:#EFE0D2;
+  border-radius:20px;
+  padding:1px 7px;
+  margin-left:5px;
+  vertical-align:1.5px;
+}
+
+/* ---------- compact two-up lists (talks, skills) ---------- */
+.stack .row{grid-template-columns:34mm 1fr;}
+.note{
+  grid-column:1 / -1;
+  font-size:8.7px;
+  color:var(--ink-faint);
+  letter-spacing:0.03em;
+  margin-top:2px;
+}
+.kv{display:grid;grid-template-columns:21mm 1fr;gap:3px 14px;}
+.kv dt{
+  font-size:8.4px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--ink-faint);padding-top:2px;
+}
+.kv dd{margin:0;color:var(--ink);font-size:10px;}
+.kv dd .q{color:var(--ink-soft);}
+
+.foot{
+  margin-top:24px;
+  padding-top:9px;
+  border-top:1px solid var(--rule);
+  font-size:8.2px;
+  letter-spacing:0.05em;
+  color:var(--ink-faint);
+  display:flex;
+  justify-content:space-between;
+}
+
+a{color:inherit;text-decoration:none;}
+
+@media print{
+  @page{size:A4;}
+  body{background:#fff;}
+  .page{margin:0;box-shadow:none;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ============ HEADER ============ -->
+  <header class="head">
+    <div class="head-left">
+      <h1 class="name">Giulio Salvatori</h1>
+      <p class="tagline">Theoretical physicist — scattering amplitudes &amp; positive geometry</p>
+      <p class="intro">I look for the hidden geometry behind how particles scatter, reformulating
+        quantum field theory in the language of curves on surfaces, polytopes, and tropical geometry.
+        Currently an MSCA Global Fellow between the Institute for Advanced Study and the Max&nbsp;Planck Institute for Physics.</p>
+      <div class="contact">
+        <span>27 Earle Lane, Princeton, NJ</span><span class="sep">·</span>
+        <span>+1&nbsp;609&nbsp;255&nbsp;6630</span><span class="sep">·</span>
+        <span>giulio.salvatori.0@gmail.com</span><span class="sep">·</span>
+        <span>ORCID 0000-0002-5961-3210</span>
+      </div>
+    </div>
+    <svg class="mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- heptagon -->
+      <polygon points="50,6 88,26 95,66 68,95 32,95 5,66 12,26"
+        stroke="#C2693F" stroke-width="1.4" fill="#F3EADC" stroke-linejoin="round"/>
+      <!-- a triangulation (non-crossing diagonals) -->
+      <g stroke="#C2693F" stroke-width="0.9" opacity="0.62">
+        <line x1="50" y1="6" x2="32" y2="95"/>
+        <line x1="50" y1="6" x2="68" y2="95"/>
+        <line x1="50" y1="6" x2="5"  y2="66"/>
+        <line x1="50" y1="6" x2="95" y2="66"/>
+      </g>
+      <g fill="#C2693F">
+        <circle cx="50" cy="6" r="2.1"/><circle cx="88" cy="26" r="2.1"/>
+        <circle cx="95" cy="66" r="2.1"/><circle cx="68" cy="95" r="2.1"/>
+        <circle cx="32" cy="95" r="2.1"/><circle cx="5" cy="66" r="2.1"/>
+        <circle cx="12" cy="26" r="2.1"/>
+      </g>
+    </svg>
+  </header>
+
+  <!-- ============ POSITIONS ============ -->
+  <section class="section">
+    <div class="label">Professional positions</div>
+    <div class="row">
+      <div class="when">2024 —</div>
+      <div class="what">
+        <span class="t">MSCA Global Fellow</span>
+        <span class="s">Institute for Advanced Study, Princeton · Max Planck Institute for Physics, Munich</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">2022 – 24</div>
+      <div class="what">
+        <span class="t">Postdoctoral Fellow</span>
+        <span class="s">Max Planck Institute for Physics, Munich</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">2019 – 22</div>
+      <div class="what">
+        <span class="t">Postdoctoral Fellow <span style="font-weight:500;color:var(--ink-soft)">(joint)</span></span>
+        <span class="s">Brown University · Perimeter Institute · Institute for Advanced Study</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">2019</div>
+      <div class="what">
+        <span class="t">Visiting Scientist — ETH Zürich</span>
+        <span class="s">Invited by Prof. V. Del Duca · master integrals for Higgs-plus-jet production</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EDUCATION ============ -->
+  <section class="section">
+    <div class="label">Education</div>
+    <div class="row">
+      <div class="when">2016 – 19</div>
+      <div class="what">
+        <span class="t">Ph.D. Physics — Università degli Studi di Milano</span>
+        <span class="s">Thesis: <em>Amplituhedra for φ³ theory at tree and loop level</em></span>
+        <span class="m">Advisor: Prof. Dietmar Klemm · Scattering Amplitudes &amp; Algebraic Geometry</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">2014 – 16</div>
+      <div class="what">
+        <span class="t">M.Sc. Physics — Università degli Studi di Milano <span class="tagchip">110/110 cum laude</span></span>
+        <span class="s">Thesis: <em>Global Residue Theorem and Grassmannian formulation of N=4 super Yang–Mills</em></span>
+        <span class="m">Advisor: Prof. Sergio Cacciatori</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">2011 – 14</div>
+      <div class="what">
+        <span class="t">B.Sc. Physics — Università degli Studi di Milano <span class="tagchip">110/110 cum laude</span></span>
+        <span class="s">Thesis: <em>Quantum estimation for spin systems at criticality</em></span>
+        <span class="m">Advisor: Prof. Matteo Paris</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GRANTS ============ -->
+  <section class="section">
+    <div class="label">Selected grants &amp; honours</div>
+    <div class="row">
+      <div class="when">2024</div>
+      <div class="what">
+        <span class="t">Marie Skłodowska-Curie Global Fellowship <span class="tagchip">score 99%</span></span>
+        <span class="s">Hosted by IAS Princeton &amp; MPP Munich · €265,647.84</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PUBLICATIONS ============ -->
+  <section class="section">
+    <div class="label">Publications</div>
+    <div class="pub-meta">
+      <b>17 publications</b> &nbsp;·&nbsp; 8 in leading peer-reviewed journals &nbsp;·&nbsp; 3 single-authored
+      &nbsp;·&nbsp; average <b>44.8</b> citations / paper &nbsp;·&nbsp; <b>h-index 13</b>.
+      &nbsp;Full record: inspirehep.net/authors/2098300
+    </div>
+    <ol class="pubs">
+      <li class="star"><span class="pt">SubTropica.</span> <span class="pa">with M. Giroux &amp; S. Mizera.</span> <span class="pv">arXiv:2604.20954 [hep-th]</span></li>
+      <li><span class="pt">Configuration Spaces of Finite Representation Type Algebras.</span> <span class="pa">with N. Arkani-Hamed, H. Frost, P-G. Plamondon &amp; H. Thomas.</span> <span class="pv">arXiv:2512.24870 [math.RT]</span></li>
+      <li class="star"><span class="pt">All Loop Scattering as a Sampling Problem.</span> <span class="pv">arXiv:2503.07707 [hep-th]</span></li>
+      <li><span class="pt">The Cut Equation.</span> <span class="pa">with N. Arkani-Hamed &amp; H. Frost.</span> <span class="pv">arXiv:2412.21027 [hep-th]</span></li>
+      <li class="star"><span class="pt">The Tropical Geometry of Subtraction Schemes.</span> <span class="pv">arXiv:2406.14606 [hep-th]</span></li>
+      <li><span class="pt">Tropical Amplitudes for Colored Lagrangians.</span> <span class="pa">with N. Arkani-Hamed, H. Frost &amp; C. Figueiredo.</span> <span class="pv">JHEP 05, 051 (2025)</span></li>
+      <li><span class="pt">Exact Quark-Mass Corrections to Higgs + Jet Production at the LHC.</span> <span class="pa">with R. Bonciani, V. Del Duca, H. Frellesvig et al.</span> <span class="pv">Acta Phys. Polon. Supp. 17 (2024) 2</span></li>
+      <li><span class="pt">All Loop Scattering for All Multiplicity.</span> <span class="pa">with N. Arkani-Hamed, H. Frost, P-G. Plamondon et al.</span> <span class="pv">JHEP 09, 033 (2025)</span></li>
+      <li class="star"><span class="pt">All Loop Scattering as a Counting Problem.</span> <span class="pa">with N. Arkani-Hamed, H. Frost, P-G. Plamondon et al.</span> <span class="pv">JHEP 08, 194 (2025)</span></li>
+      <li><span class="pt">Next-to-Leading-Order QCD Corrections to Higgs Production in Association with a Jet.</span> <span class="pa">with R. Bonciani, V. Del Duca, H. Frellesvig et al.</span> <span class="pv">Phys. Lett. B, 137995</span></li>
+      <li><span class="pt">Causal Diamonds, Cluster Polytopes and Scattering Amplitudes.</span> <span class="pa">with N. Arkani-Hamed, S. He &amp; H. Thomas.</span> <span class="pv">JHEP 11, 049 (2022)</span></li>
+      <li><span class="pt">Scattering Amplitudes and Simple Canonical Forms for Simple Polytopes.</span> <span class="pa">with S. Stanojevic.</span> <span class="pv">JHEP 2021, 67 (2021)</span></li>
+      <li><span class="pt">The Complete Set of Two-Loop Master Integrals for Higgs + Jet Production in QCD.</span> <span class="pa">with H. Frellesvig, M. Hidding, L. Maestri &amp; F. Moriello.</span> <span class="pv">JHEP 2020, 93 (2020)</span></li>
+      <li><span class="pt">Evaluating a Family of Two-Loop Non-Planar Master Integrals for Higgs + Jet Production with Full Heavy-Quark Mass Dependence.</span> <span class="pa">with R. Bonciani, V. Del Duca, J. M. Henn, V. A. Smirnov et al.</span> <span class="pv">JHEP 2020, 132 (2020)</span></li>
+      <li class="star"><span class="pt">1-Loop Amplitudes from the Halohedron.</span> <span class="pv">JHEP 2019, 74 (2019)</span></li>
+      <li><span class="pt">Hyperbolic Geometry and Amplituhedra in 1+2 Dimensions.</span> <span class="pa">with S. Cacciatori.</span> <span class="pv">JHEP 2018, 167 (2018)</span></li>
+      <li><span class="pt">Quantum Metrology in Lipkin–Meshkov–Glick Critical Systems.</span> <span class="pa">with A. Mandarino &amp; M. Paris.</span> <span class="pv">Phys. Rev. A 90, 022111 (2014)</span></li>
+    </ol>
+  </section>
+
+  <!-- ============ ORGANIZING ============ -->
+  <section class="section">
+    <div class="label">Organizing</div>
+    <div class="row">
+      <div class="when">2026</div>
+      <div class="what">
+        <span class="t">Meeting at the Extremes <span class="tagchip">co-organizer</span></span>
+        <span class="s">Workshop, Institute for Advanced Study, Princeton · 18–22 May 2026</span>
+        <span class="m">with N. Arkani-Hamed, H. Frost, M. Giroux &amp; A. Guevara</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TALKS ============ -->
+  <section class="section stack">
+    <div class="label">Talks &amp; seminars · selected</div>
+
+    <div class="row">
+      <div class="when">Plenary</div>
+      <div class="what">
+        <span class="t">All Loop Scattering as a Sampling Problem</span>
+        <span class="s">Amplitudes 2025, Seoul National University</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">Plenary</div>
+      <div class="what">
+        <span class="t">Colorless Surfaceology</span>
+        <span class="s">QCD Meets Gravity 2024, LeCosPa / CTP / NTU</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">Plenary</div>
+      <div class="what">
+        <span class="t">Positive Geometries Beyond the Planar Limit</span>
+        <span class="s">QCD Meets Gravity 2020, Northwestern University</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">Seminar</div>
+      <div class="what">
+        <span class="t">A Primer on Surfaceology</span>
+        <span class="s">Mathematical Physics Seminar, Perimeter Institute · 2025</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">Seminar</div>
+      <div class="what">
+        <span class="t">The Tropical Geometry of Subtraction Schemes</span>
+        <span class="s">Mathematical Physics Seminar, University of Oxford</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">Workshop</div>
+      <div class="what">
+        <span class="t">A Supposedly Fun Computation I'll Never Do Again: Surfacehedra and Beyond</span>
+        <span class="s">String Amplitudes at Finite α′ 2023, IAS</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">Workshop</div>
+      <div class="what">
+        <span class="t">The Positive Geometry of Riemann Surfaces</span>
+        <span class="s">MIAPbP 2022 · MITP 2021</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">Workshop</div>
+      <div class="what">
+        <span class="t">A Very Gentle Introduction to Positive Geometry</span>
+        <span class="s">Scattering Amplitudes &amp; Cosmology 2023, ICTP</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="note">Earlier talks include Amplitudes 2018 (UC Davis), GGI 2018, and New Frontiers in Theoretical Physics XXXVI (2018), with research seminars at Durham, ETH Zürich, ASC Munich, and the IAS.</div>
+    </div>
+  </section>
+
+  <!-- ============ MENTORING / TEACHING ============ -->
+  <section class="section">
+    <div class="label">Mentoring &amp; teaching</div>
+    <div class="row">
+      <div class="when">2025</div>
+      <div class="what">
+        <span class="t">Michael Kasprzak — Princeton University</span>
+        <span class="s">Junior Paper: <em>Generalized String Theory Amplitudes</em></span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">2024 – 25</div>
+      <div class="what">
+        <span class="t">Aaron Willen — Ludwig Maximilian University, Munich</span>
+        <span class="s">Master's thesis: <em>Tropical Tools for Feynman Integrals</em></span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="when">2016 – 18</div>
+      <div class="what">
+        <span class="t">Teaching Assistant — Università degli Studi di Milano</span>
+        <span class="s">Mathematical Methods of Physics I · Geometry I</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SKILLS / OUTREACH ============ -->
+  <section class="section">
+    <div class="label">Skills &amp; outreach</div>
+    <dl class="kv">
+      <dt>Languages</dt><dd>Italian <span class="q">(native)</span> · English <span class="q">(fluent)</span> · French <span class="q">(intermediate)</span></dd>
+      <dt>Software</dt><dd>Mathematica · Maple · Macaulay2 · LaTeX · C++ · CUDA</dd>
+      <dt>Press</dt><dd><span class="q">Quanta Magazine —</span> “Physicists Reveal a Quantum Geometry That Exists Outside of Space and Time”</dd>
+    </dl>
+  </section>
+
+  <div class="foot">
+    <span>Giulio Salvatori — Curriculum Vitae</span>
+    <span>Princeton · 2026</span>
+  </div>
+
+</div>
+</body>
+</html>

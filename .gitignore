@@ -1,0 +1,11 @@
+# LaTeX build artifacts
+cv/*.aux
+cv/*.log
+cv/*.out
+cv/*.fls
+cv/*.fdb_latexmk
+cv/*.synctex.gz
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp

@@ -1,0 +1,266 @@
+%==============================================================================
+%  Giulio Salvatori — Curriculum Vitae
+%  Warm / Californian-minimal styling.  Compile with XeLaTeX.
+%
+%      xelatex cv.tex
+%
+%  Fonts (Fraunces & Inter, static instances) live in ./texfonts and are
+%  pulled in by the font block below — no system installation required.
+%==============================================================================
+\documentclass[10pt]{article}
+
+\usepackage[a4paper,top=11mm,bottom=9mm,left=20mm,right=20mm]{geometry}
+\usepackage{fontspec}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage[most]{tcolorbox}
+\usepackage{pifont}      % star glyph (\ding{72})
+\usepackage{ragged2e}    % left-aligned text
+\usepackage{xparse}      % clean macro definitions (starred publications)
+\usepackage{microtype}
+\usepackage{pagecolor}   % warm page background
+
+%------------------------------------------------------------------ palette
+\definecolor{paper}   {HTML}{FAF6EE}  % warm ivory background
+\definecolor{ink}     {HTML}{2A2521}  % espresso — primary text
+\definecolor{inksoft} {HTML}{6E6358}  % taupe — secondary text
+\definecolor{inkfaint}{HTML}{A99E8E}  % muted — tertiary / captions
+\definecolor{clay}    {HTML}{C2693F}  % terracotta accent
+\definecolor{claydeep}{HTML}{A8542F}  % deeper accent — years, emphasis
+\definecolor{line}    {HTML}{E8DDCC}  % hairline rules
+\definecolor{wash}    {HTML}{F3EADC}  % soft band fill
+\definecolor{chipbg}  {HTML}{EFE0D2}  % pill fill
+
+\pagecolor{paper}
+\color{ink}
+\pagestyle{empty}
+
+%------------------------------------------------------------------ fonts
+\setmainfont{Inter}[
+  Path      = texfonts/,
+  UprightFont = Inter-Reg.ttf,
+  ItalicFont  = Inter-Ital.ttf,
+  BoldFont    = Inter-SemiBold.ttf ]          % \textbf -> SemiBold
+
+\newfontfamily\Display{Fraunces Disp}[Path=texfonts/,UprightFont=Fraunces-Disp.ttf]
+\newfontfamily\Serif{Fraunces Text}[Path=texfonts/,
+  UprightFont=Fraunces-Text.ttf, ItalicFont=Fraunces-Ital.ttf]
+\newfontfamily\SBold{Inter SemiBold}[Path=texfonts/,UprightFont=Inter-SemiBold.ttf]
+
+\setlength{\parindent}{0pt}
+\RaggedRight
+
+%------------------------------------------------------------------ spacing knobs
+% Tuning the whole document happens here.
+\newlength{\LabelW}    \setlength{\LabelW}   {21mm} % year / number column
+\newlength{\TalkLabelW}\setlength{\TalkLabelW}{24mm}% talks use a wider column
+\newlength{\LabelGap}  \setlength{\LabelGap} {3mm}
+\newlength{\SectionSkip}\setlength{\SectionSkip}{11pt} % above a section label
+\newlength{\SectionGap} \setlength{\SectionGap} {5pt}   % below a section label
+\newlength{\RowSkip}    \setlength{\RowSkip}    {3pt} % around inter-row rules
+\newlength{\KVSkip}     \setlength{\KVSkip}     {3.5pt}
+
+%------------------------------------------------------------------ text styles
+\newcommand{\role}[1]   {{\SBold\fontsize{10}{12.6}\selectfont\textcolor{ink}{#1}}}
+\newcommand{\place}[1]  {{\fontsize{9.7}{12.4}\selectfont\textcolor{inksoft}{#1}}}
+\newcommand{\detail}[1] {{\Serif\itshape\fontsize{9.2}{11.8}\selectfont\textcolor{inkfaint}{#1}}}
+\newcommand{\marker}[1] {{\Serif\fontsize{11}{13}\selectfont\textcolor{claydeep}{#1}}}
+\newcommand{\dotsep}    {\textcolor{clay}{\,\textperiodcentered\,}}
+
+%------------------------------------------------------------------ section label
+\newcommand{\eyebrow}[1]{%
+  {\SBold\fontsize{7.8}{9}\selectfont\textcolor{clay}{%
+   \addfontfeature{LetterSpace=20}\MakeUppercase{#1}}}}
+
+\newif\ifFirstRow
+\newcommand{\hairline}{\par\noindent{\color{line}\rule{\linewidth}{0.4pt}}\par}
+
+\newcommand{\cvsection}[1]{%
+  \par\addvspace{\SectionSkip}\FirstRowtrue
+  \noindent\eyebrow{#1}\hspace{8pt}%
+  {\color{line}\leaders\hrule height0.5pt\hfill\kern0pt}\par
+  \addvspace{\SectionGap}}
+
+%------------------------------------------------------------------ ledger row
+%  \entry[<labelwidth>]{<left>}{<right>}
+\NewDocumentCommand{\entry}{O{\LabelW} m m}{%
+  \par
+  \ifFirstRow \FirstRowfalse \else \addvspace{\RowSkip}\hairline \fi
+  \addvspace{\RowSkip}%
+  \noindent
+  \begin{minipage}[t]{#1}\strut\marker{#2}\end{minipage}\hspace{\LabelGap}%
+  \begin{minipage}[t]{\dimexpr\linewidth-#1-\LabelGap}\strut #3\end{minipage}%
+  \par}
+
+%------------------------------------------------------------------ publications
+\newcounter{pubno}
+\newcommand{\pubnum}{\ifnum\value{pubno}<10 0\fi\arabic{pubno}}
+%  \publication*{title}{authors}{venue}   (the star adds a ★ to the number)
+\NewDocumentCommand{\publication}{s m m m}{%
+  \par
+  \ifnum\value{pubno}>0 \addvspace{\RowSkip}\hairline \fi
+  \addvspace{\RowSkip}\stepcounter{pubno}%
+  \noindent
+  \begin{minipage}[t]{\LabelW}\strut
+    {\Serif\fontsize{10}{12}\selectfont\textcolor{clay}{\pubnum
+     \IfBooleanT{#1}{\,{\fontsize{8}{8}\selectfont\ding{72}}}}}\end{minipage}%
+  \begin{minipage}[t]{\dimexpr\linewidth-\LabelW}\strut
+    \role{#2.}\ \place{#3}\ \detail{#4}\end{minipage}\par}
+
+%------------------------------------------------------------------ skills rows
+\newcommand{\kv}[2]{%
+  \par\addvspace{\KVSkip}\noindent
+  \begin{minipage}[t]{\LabelW}\strut
+    {\SBold\fontsize{7.6}{9}\selectfont\textcolor{inkfaint}{%
+     \addfontfeature{LetterSpace=12}\MakeUppercase{#1}}}\end{minipage}\hspace{\LabelGap}%
+  \begin{minipage}[t]{\dimexpr\linewidth-\LabelW-\LabelGap}\strut
+    {\fontsize{9.8}{12.4}\selectfont\textcolor{ink}{#2}}\end{minipage}\par}
+
+%------------------------------------------------------------------ pill + band
+\newtcbox{\chip}{on line,colback=chipbg,colframe=chipbg,boxrule=0pt,arc=4.5pt,
+  left=4pt,right=4pt,top=1pt,bottom=1pt,boxsep=0pt,
+  fontupper={\SBold\fontsize{7.2}{8}\selectfont\color{claydeep}}}
+
+\newtcolorbox{statband}{colback=wash,colframe=wash,boxrule=0pt,arc=4pt,
+  left=10pt,right=10pt,top=6pt,bottom=6pt,boxsep=0pt}
+\newcommand{\stat}[1]{{\SBold\color{claydeep}#1}}
+
+%------------------------------------------------------------------ signature motif
+%  A triangulated heptagon — a vertex of the associahedron, the polytope at the
+%  centre of Giulio's amplitudes work.
+\newcommand{\heptagon}{%
+  \begin{tikzpicture}[scale=0.40]
+    \def\R{2.6}
+    \foreach \i in {0,...,6}{\coordinate (v\i) at ({90+\i*360/7}:\R);}
+    \filldraw[fill=wash,draw=clay,line width=1.1pt,line join=round]
+      (v0)--(v1)--(v2)--(v3)--(v4)--(v5)--(v6)--cycle;
+    \draw[clay,line width=0.7pt,opacity=0.6] (v0)--(v2) (v0)--(v3) (v0)--(v4) (v0)--(v5);
+    \foreach \i in {0,...,6}{\fill[clay] (v\i) circle (1.7pt);}
+  \end{tikzpicture}}
+
+%==============================================================================
+\begin{document}
+
+%--------------------------------------------------------------------- HEADER
+\noindent
+\begin{minipage}[t]{\dimexpr\linewidth-30mm}
+  {\Display\fontsize{34}{34}\selectfont\textcolor{ink}{Giulio Salvatori}}\\[4pt]
+  {\Serif\itshape\fontsize{13}{15}\selectfont\textcolor{claydeep}%
+    {Theoretical physicist — scattering amplitudes \& positive geometry}}\\[6pt]
+  {\fontsize{9.7}{14}\selectfont\textcolor{inksoft}{%
+    I look for the hidden geometry behind how particles scatter, reformulating quantum
+    field theory in the language of curves on surfaces, polytopes, and tropical geometry.}}\\[6pt]
+  {\fontsize{8.4}{11}\selectfont\textcolor{inksoft}{\addfontfeature{LetterSpace=3}%
+    27 Earle Lane, Princeton, NJ \dotsep +1\,609\,255\,6630 \dotsep
+    giulio.salvatori.0@gmail.com \dotsep ORCID 0000-0002-5961-3210}}
+\end{minipage}\hfill
+\begin{minipage}[t]{26mm}\vspace{2pt}\raggedleft\heptagon\end{minipage}
+
+%--------------------------------------------------------------------- POSITIONS
+\cvsection{Professional positions}
+\entry{2024 —}{%
+  \role{MSCA Global Fellow}\\
+  \place{Institute for Advanced Study, Princeton \dotsep Max Planck Institute for Physics, Munich}}
+\entry{2022 – 24}{%
+  \role{Postdoctoral Fellow}\\
+  \place{Max Planck Institute for Physics, Munich}}
+\entry{2019 – 22}{%
+  \role{Postdoctoral Fellow }\place{(joint)}\\
+  \place{Brown University \dotsep Perimeter Institute \dotsep Institute for Advanced Study}}
+\entry{2019}{%
+  \role{Visiting Scientist — ETH Zürich}\\
+  \place{Invited by Prof.\ V.\ Del Duca \dotsep master integrals for Higgs-plus-jet production}}
+
+%--------------------------------------------------------------------- EDUCATION
+\cvsection{Education}
+\entry{2016 – 19}{%
+  \role{Ph.D.\ Physics — Università degli Studi di Milano}\\
+  \place{Thesis: \textit{Amplituhedra for φ\textsuperscript{3} theory at tree and loop level}}\\
+  \detail{Advisor: Prof.\ Dietmar Klemm \textperiodcentered\ Scattering Amplitudes \& Algebraic Geometry}}
+\entry{2014 – 16}{%
+  \role{M.Sc.\ Physics — Università degli Studi di Milano}\ \chip{110/110 cum laude}\\
+  \place{Thesis: \textit{Global Residue Theorem and Grassmannian formulation of N=4 super Yang–Mills}}\\
+  \detail{Advisor: Prof.\ Sergio Cacciatori}}
+\entry{2011 – 14}{%
+  \role{B.Sc.\ Physics — Università degli Studi di Milano}\ \chip{110/110 cum laude}\\
+  \place{Thesis: \textit{Quantum estimation for spin systems at criticality}}\\
+  \detail{Advisor: Prof.\ Matteo Paris}}
+
+%--------------------------------------------------------------------- GRANTS
+\cvsection{Selected grants \& honours}
+\entry{2024}{%
+  \role{Marie Skłodowska-Curie Global Fellowship}\ \chip{score 99\%}\\
+  \place{Hosted by IAS Princeton \& MPP Munich \dotsep €265,647.84}}
+
+%--------------------------------------------------------------------- PUBLICATIONS
+%--------------------------------------------------------------------- PRESS
+\cvsection{Press}
+{\fontsize{9.8}{12.4}\selectfont\textcolor{inksoft}{Quanta Magazine —} \textcolor{ink}{“Physicists Reveal a Quantum Geometry That Exists Outside of Space and Time”}}
+
+%--------------------------------------------------------------------- PUBLICATIONS
+\cvsection{Publications}
+\begin{statband}
+  {\fontsize{9.2}{13}\selectfont\textcolor{inksoft}{%
+   \stat{17 publications} \dotsep 8 in leading peer-reviewed journals \dotsep
+   3 single-authored \dotsep average \stat{44.8} citations / paper \dotsep
+   \stat{h-index 13}. \ Full record: inspirehep.net/authors/2098300}}
+\end{statband}
+\smallskip
+\setcounter{pubno}{0}
+\publication*{SubTropica}{with M. Giroux \& S. Mizera.}{arXiv:2604.20954 [hep-th]}
+\publication {Configuration Spaces of Finite Representation Type Algebras}{with N. Arkani-Hamed, H. Frost, P-G. Plamondon \& H. Thomas.}{arXiv:2512.24870 [math.RT]}
+\publication*{All Loop Scattering as a Sampling Problem}{}{JHEP 02, 196 (2026)}
+\publication {The Cut Equation}{with N. Arkani-Hamed \& H. Frost.}{arXiv:2412.21027 [hep-th]}
+\publication*{The Tropical Geometry of Subtraction Schemes}{}{arXiv:2406.14606 [hep-th]}
+\publication {Tropical Amplitudes for Colored Lagrangians}{with N. Arkani-Hamed, H. Frost \& C. Figueiredo.}{JHEP 05, 051 (2025)}
+\publication {Exact Quark-Mass Corrections to Higgs + Jet Production at the LHC}{with R. Bonciani, V. Del Duca, H. Frellesvig et al.}{Acta Phys. Polon. Supp. 17 (2024) 2}
+\publication {All Loop Scattering for All Multiplicity}{with N. Arkani-Hamed, H. Frost, P-G. Plamondon et al.}{JHEP 09, 033 (2025)}
+\publication*{All Loop Scattering as a Counting Problem}{with N. Arkani-Hamed, H. Frost, P-G. Plamondon et al.}{JHEP 08, 194 (2025)}
+\publication {Next-to-Leading-Order QCD Corrections to Higgs Production in Association with a Jet}{with R. Bonciani, V. Del Duca, H. Frellesvig et al.}{Phys. Lett. B, 137995}
+\publication {Causal Diamonds, Cluster Polytopes and Scattering Amplitudes}{with N. Arkani-Hamed, S. He \& H. Thomas.}{JHEP 11, 049 (2022)}
+\publication {Scattering Amplitudes and Simple Canonical Forms for Simple Polytopes}{with S. Stanojevic.}{JHEP 2021, 67 (2021)}
+\publication {The Complete Set of Two-Loop Master Integrals for Higgs + Jet Production in QCD}{with H. Frellesvig, M. Hidding, L. Maestri \& F. Moriello.}{JHEP 2020, 93 (2020)}
+\publication {Evaluating a Family of Two-Loop Non-Planar Master Integrals for Higgs + Jet Production with Full Heavy-Quark Mass Dependence}{with R. Bonciani, V. Del Duca, J. M. Henn, V. A. Smirnov et al.}{JHEP 2020, 132 (2020)}
+\publication*{1-Loop Amplitudes from the Halohedron}{}{JHEP 2019, 74 (2019)}
+\publication {Hyperbolic Geometry and Amplituhedra in 1+2 Dimensions}{with S. Cacciatori.}{JHEP 2018, 167 (2018)}
+\publication {Quantum Metrology in Lipkin–Meshkov–Glick Critical Systems}{with A. Mandarino \& M. Paris.}{Phys. Rev. A 90, 022111 (2014)}
+
+%--------------------------------------------------------------------- ORGANIZING
+\cvsection{Organizing}
+\entry{2026}{%
+  \role{Meeting at the Extremes}\ \chip{co-organizer}\\
+  \place{Workshop, Institute for Advanced Study, Princeton \dotsep 18–22 May 2026}\\
+  \detail{with N. Arkani-Hamed, H. Frost, M. Giroux \& A. Guevara}}
+
+%--------------------------------------------------------------------- TALKS
+\cvsection{Talks \& seminars · selected}
+\entry[\TalkLabelW]{Plenary}{\role{All Loop Scattering as a Sampling Problem}\\ \place{Amplitudes 2025, Seoul National University}}
+\entry[\TalkLabelW]{Plenary}{\role{Colorless Surfaceology}\\ \place{QCD Meets Gravity 2024, LeCosPa / CTP / NTU}}
+\entry[\TalkLabelW]{Plenary}{\role{Positive Geometries Beyond the Planar Limit}\\ \place{QCD Meets Gravity 2020, Northwestern University}}
+\entry[\TalkLabelW]{Seminar}{\role{A Primer on Surfaceology}\\ \place{Mathematical Physics Seminar, Perimeter Institute \dotsep 2025}}
+\entry[\TalkLabelW]{Seminar}{\role{The Tropical Geometry of Subtraction Schemes}\\ \place{Mathematical Physics Seminar, University of Oxford}}
+\entry[\TalkLabelW]{Workshop}{\role{A Supposedly Fun Computation I'll Never Do Again: Surfacehedra and Beyond}\\ \place{String Amplitudes at Finite α′ 2023, IAS}}
+\entry[\TalkLabelW]{Workshop}{\role{The Positive Geometry of Riemann Surfaces}\\ \place{MIAPbP 2022 \dotsep MITP 2021}}
+\entry[\TalkLabelW]{Workshop}{\role{A Very Gentle Introduction to Positive Geometry}\\ \place{Scattering Amplitudes \& Cosmology 2023, ICTP}}
+\par\addvspace{3pt}{\fontsize{8.5}{11}\selectfont\textcolor{inkfaint}{%
+  Earlier talks include Amplitudes 2018 (UC Davis), GGI 2018, and New Frontiers in
+  Theoretical Physics XXXVI (2018), with research seminars at Durham, ETH Zürich,
+  ASC Munich, and the IAS.}}
+
+%--------------------------------------------------------------------- MENTORING
+\cvsection{Mentoring \& teaching}
+\entry{2025}{\role{Michael Kasprzak — Princeton University}\\ \place{Junior Paper: \textit{Generalized String Theory Amplitudes}}}
+\entry{2024 – 25}{\role{Aaron Willen — Ludwig Maximilian University, Munich}\\ \place{Master's thesis: \textit{Tropical Tools for Feynman Integrals}}}
+\entry{2016 – 18}{\role{Teaching Assistant — Università degli Studi di Milano}\\ \place{Mathematical Methods of Physics I \dotsep Geometry I}}
+
+%--------------------------------------------------------------------- SKILLS
+\cvsection{Skills \& outreach}
+\kv{Languages}{Italian {\color{inksoft}(native)} \textperiodcentered\ English {\color{inksoft}(fluent)} \textperiodcentered\ French {\color{inksoft}(intermediate)}}
+\kv{Software}{Mathematica \textperiodcentered\ Maple \textperiodcentered\ Macaulay2 \textperiodcentered\ LaTeX \textperiodcentered\ C++ \textperiodcentered\ CUDA}
+
+%--------------------------------------------------------------------- FOOTER
+\par\addvspace{5pt}{\color{line}\rule{\linewidth}{0.4pt}}\par\addvspace{3pt}
+\noindent{\fontsize{8}{10}\selectfont\textcolor{inkfaint}{\addfontfeature{LetterSpace=4}%
+  Giulio Salvatori — Curriculum Vitae\hfill Princeton \textperiodcentered\ 2026}}
+
+\end{document}
