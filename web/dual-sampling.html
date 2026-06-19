@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dual Sampling, by scrolling — Giulio Salvatori</title>
+<meta name="description" content="A scroll-through of the sampling problem: evaluating scattering amplitudes by turning a coin flip into a Monte-Carlo estimator, with tropical importance sampling on surfaces.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF6EE; --ink:#2A2521; --inksoft:#6E6358; --inkfaint:#A99E8E;
+    --clay:#C2693F; --claydeep:#A8542F; --line:#E8DDCC; --wash:#F3EADC; --chip:#EFE0D2;
+    --serif:'Fraunces',Georgia,serif; --sans:'Inter',-apple-system,Segoe UI,Helvetica,Arial,sans-serif;
+    --maxw:980px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+    font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;}
+  a{color:var(--claydeep); text-decoration:none;} a:hover{color:var(--clay);}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px;}
+
+  nav{position:sticky; top:0; z-index:50; backdrop-filter:blur(8px);
+    background:color-mix(in srgb, var(--paper) 86%, transparent); border-bottom:1px solid var(--line);}
+  nav .wrap{display:flex; align-items:center; justify-content:space-between; height:56px;}
+  nav .brand{font-family:var(--serif); font-weight:500; font-size:18px; letter-spacing:-.01em;}
+  nav .links{display:flex; gap:22px; font-size:14px;}
+  nav .links a{color:var(--inksoft);} nav .links a:hover{color:var(--clay);}
+  nav .links a.active{color:var(--clay);}
+  @media(max-width:620px){ nav .links a:not(.active){display:none;} }
+
+  header.intro{min-height:calc(100vh - 56px); display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:0 24px;}
+  header.intro .inner{max-width:680px;}
+  .eyebrow{font-size:12px; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--clay); margin:0 0 14px;}
+  h1{font-family:var(--serif); font-weight:380; font-size:46px; line-height:1.02; letter-spacing:-.015em;
+    margin:0; font-variation-settings:'SOFT' 60,'opsz' 144;}
+  .intro p{font-size:18px; color:var(--inksoft); max-width:60ch; margin:18px auto 0;}
+  .scroll-hint{margin-top:32px; color:var(--inkfaint); font-size:12px; letter-spacing:.2em; text-transform:uppercase;}
+  .scroll-hint span{display:block; font-size:18px; margin-top:6px; animation:bob 1.8s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)}}
+  @media(max-width:620px){ h1{font-size:36px;} }
+
+  .scrolly{position:relative; display:grid; grid-template-columns:1.05fr .95fr; gap:48px; margin-top:24px;}
+  .graphic{position:sticky; top:0; height:100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:14px;}
+  .stage{position:relative; width:min(420px,82%); aspect-ratio:1/1;}
+  .stage svg{position:absolute; inset:0; width:100%; height:100%; transition:opacity .55s ease;}
+
+  .steps{padding:18vh 0 22vh;}
+  .step{min-height:82vh; display:flex; align-items:center;}
+  .step .card{background:linear-gradient(180deg,#fff7,var(--wash)); border:1px solid var(--line);
+    border-radius:16px; padding:22px 24px; opacity:.32; transform:translateY(8px);
+    transition:opacity .4s ease, transform .4s ease;}
+  .step.active .card{opacity:1; transform:none;}
+  .step .num{font-family:var(--serif); color:var(--clay); font-size:14px; letter-spacing:.02em;}
+  .step h3{font-family:var(--serif); font-weight:480; font-size:23px; margin:.25em 0 .35em; letter-spacing:-.01em;}
+  .step p{margin:.4em 0; color:var(--inksoft);}
+
+  @media(max-width:760px){
+    .scrolly{grid-template-columns:1fr; gap:0;}
+    .graphic{height:56vh; top:56px; background:linear-gradient(180deg,var(--paper),color-mix(in srgb,var(--paper) 80%,transparent));}
+    .steps{padding:4vh 0 18vh;}
+    .step{min-height:70vh;}
+  }
+
+  .closing{border-top:1px solid var(--line); padding:40px 0 12px; margin-top:8px;}
+  .closing h2{font-family:var(--serif); font-weight:440; font-size:26px; margin:.2em 0 .4em;}
+  .closing p{color:var(--inksoft); max-width:62ch;}
+  .papers{display:flex; flex-wrap:wrap; gap:10px; margin-top:18px;}
+  .papers a{display:inline-block; background:var(--chip); color:var(--claydeep);
+    border-radius:999px; padding:8px 15px; font-size:14px;}
+  .papers a:hover{background:var(--wash);}
+  .more{padding:18px 0 40px; color:var(--inkfaint); font-size:14.5px;}
+  footer{border-top:1px solid var(--line); padding:26px 0 48px; color:var(--inkfaint); font-size:13px;}
+  footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+  @media(prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} .stage svg,.step .card{transition:none;} .scroll-hint span{animation:none;} }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="index.html">Giulio Salvatori</a>
+    <div class="links">
+      <a href="index.html#research">Research</a>
+      <a href="index.html#work">Selected work</a>
+      <a class="active" href="demos.html">Demos</a>
+      <a href="index.html#links">Links</a>
+    </div>
+  </div>
+</nav>
+
+<header class="intro">
+  <div class="inner">
+    <p class="eyebrow">Demo · Dual sampling</p>
+    <h1>A coin flip for an amplitude</h1>
+    <p>How do you turn the flip of a coin into a random variable whose expected value is a
+      scattering amplitude? By evaluating the curve integral with Monte Carlo — and sampling
+      cleverly, with a tropical bias, directly on the surface.</p>
+    <div class="scroll-hint">scroll<span>&darr;</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="scrolly">
+    <div class="graphic">
+      <div class="stage">
+        <svg id="stageA" viewBox="0 0 320 320" aria-hidden="true"></svg>
+        <svg id="stageB" viewBox="0 0 320 320" aria-hidden="true" style="opacity:0"></svg>
+      </div>
+    </div>
+
+    <div class="steps" id="steps">
+      <div class="step" data-step="0">
+        <div class="card">
+          <div class="num">01</div>
+          <h3>An integral, not a sum</h3>
+          <p>The curve-integral formula writes the amplitude as a single integral over the
+            surface — no diagrams. But it lives in many dimensions. How do you actually
+            evaluate it?</p>
+        </div>
+      </div>
+      <div class="step" data-step="1">
+        <div class="card">
+          <div class="num">02</div>
+          <h3>Flip a coin</h3>
+          <p>Turn the flip of a coin into a random variable whose <em>average</em> is the
+            amplitude. Draw points at random, evaluate the integrand, take the mean — plain
+            Monte&nbsp;Carlo.</p>
+        </div>
+      </div>
+      <div class="step" data-step="2">
+        <div class="card">
+          <div class="num">03</div>
+          <h3>Where the integrand hides</h3>
+          <p>The catch: the integrand is spiky, concentrated near the surface's degenerations.
+            Uniform random points almost always land in the flats and miss the peaks — the
+            estimate barely converges.</p>
+        </div>
+      </div>
+      <div class="step" data-step="3">
+        <div class="card">
+          <div class="num">04</div>
+          <h3>Aim the darts</h3>
+          <p><em>Tropical importance sampling.</em> Use the Newton-polytope / tropical shadow of
+            the integrand to draw samples where it is large. The piecewise-linear tents hug the
+            peaks, and the variance collapses.</p>
+        </div>
+      </div>
+      <div class="step" data-step="4">
+        <div class="card">
+          <div class="num">05</div>
+          <h3>A dual triangulation</h3>
+          <p>What makes it scale: drop the Feynman bias that an amplitude is a sum over diagrams,
+            and re-arrange the sum the way a <em>dual triangulation</em> of the curve integral
+            suggests — realized as a random process directly on the surface.</p>
+        </div>
+      </div>
+      <div class="step" data-step="5">
+        <div class="card">
+          <div class="num">06</div>
+          <h3>Cheaper than the diagrams</h3>
+          <p>Run it for massive <em>tr&nbsp;φ³</em> in two dimensions, up to ten loops. The
+            running average settles onto the amplitude using far fewer sample points than there
+            are Feynman diagrams.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="closing">
+    <h2>Why a physicist cares</h2>
+    <p>A scattering amplitude becomes something you can <em>estimate</em>, like the area under a
+      curve, even when writing it as a sum of diagrams is hopeless. The sampler is a stochastic
+      process on surfaces, so its cost tracks the geometry rather than the diagram count. The
+      paper closes with an idea borrowed from machine learning: parametrize a family of
+      samplers and <em>learn</em> the best one by solving a convex optimization problem.</p>
+    <div class="papers">
+      <a href="https://arxiv.org/abs/2503.07707">All Loop Scattering as a Sampling Problem · JHEP 02, 196 (2026)&nbsp;&rarr;</a>
+    </div>
+    <p style="margin-top:18px;">
+      <a href="demos.html">&larr;&nbsp;Back to demos</a>
+      &nbsp;·&nbsp;
+      <a href="surfaceology.html">Surfaceology&nbsp;&rarr;</a>
+    </p>
+  </div>
+  <div class="more">
+    First draft — the narrative follows the abstract of
+    <em>All Loop Scattering as a Sampling Problem</em>. The figures are schematic.
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr"></span> Giulio Salvatori</span>
+    <span><a href="index.html">Home</a> · Princeton, NJ</span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  const NS='http://www.w3.org/2000/svg';
+  const C_CLAY='#C2693F', C_DEEP='#A8542F', C_FAINT='#A99E8E',
+        C_WASH='#F3EADC', C_CHIP='#EFE0D2', C_PAPER='#FAF6EE',
+        C_INK='#2A2521', C_SOFT='#6E6358', C_LINE='#E8DDCC';
+
+  const layerA=document.getElementById('stageA'), layerB=document.getElementById('stageB');
+  let stage=layerA, front=layerA, back=layerB;
+  function clear(){ while(stage.firstChild) stage.removeChild(stage.firstChild); }
+  function el(n,a){const e=document.createElementNS(NS,n); for(const k in a) e.setAttribute(k,a[k]); return e;}
+  function add(...ns){ ns.forEach(n=>stage.appendChild(n)); }
+  function line(p,q,o){o=o||{}; return el('line',Object.assign({x1:p[0],y1:p[1],x2:q[0],y2:q[1],
+    stroke:o.stroke||C_DEEP,'stroke-width':o.w||1.6,'stroke-linecap':'round',opacity:o.op!=null?o.op:1}, o.dash?{'stroke-dasharray':o.dash}:{}));}
+  function dot(p,r,fill,o){return el('circle',Object.assign({cx:p[0],cy:p[1],r:r,fill:fill},o||{}));}
+  function poly(pts,o){return el('polygon',Object.assign({points:pts.map(p=>p[0]+','+p[1]).join(' ')},o||{}));}
+  function txt(p,s,o){const t=el('text',Object.assign({x:p[0],y:p[1]},o||{})); t.textContent=s; return t;}
+  function pathd(d,o){o=o||{}; return el('path',Object.assign({d:d,fill:o.fill||'none',stroke:o.stroke||C_CLAY,
+    'stroke-width':o.w||1.8,'stroke-linecap':'round','stroke-linejoin':'round',opacity:o.op!=null?o.op:1}, o.dash?{'stroke-dasharray':o.dash}:{}));}
+  const LBL={fill:C_SOFT,'font-family':'Fraunces,serif','font-style':'italic','font-size':'14','text-anchor':'middle'};
+  function rng(seed){ let s=seed>>>0; return ()=>{s=(s*1103515245+12345)>>>0; return (s%100000)/100000;}; }
+
+  const CX=160, CY=160, R=116;
+  const V=Array.from({length:6},(_,k)=>{const a=-Math.PI/2+k*2*Math.PI/6; return [CX+R*Math.cos(a),CY+R*Math.sin(a)];});
+
+  // ---- 01 — the curve integral ----
+  function drawIntegral(){
+    clear();
+    add(poly([[160,72],[68,250],[252,250]],{fill:C_WASH,opacity:0.6,stroke:C_CLAY,'stroke-width':2,'stroke-linejoin':'round'}));
+    [0.3,0.5,0.7].forEach(t=>{ const a=[160+(68-160)*t,72+(250-72)*t], b=[160+(252-160)*t,72+(250-72)*t];
+      add(line(a,b,{stroke:C_CLAY,w:1,op:0.3})); });
+    add(txt([160,176],'𝒜 = ∫',{fill:C_INK,'font-family':'Fraunces,serif','font-size':'30','text-anchor':'middle'}));
+    add(txt([160,300],'the curve integral',LBL));
+  }
+
+  // ---- 02 — a coin flip ----
+  function drawCoin(){
+    clear();
+    add(el('circle',{cx:104,cy:150,r:42,fill:C_CHIP,stroke:C_CLAY,'stroke-width':2.5}));
+    add(el('circle',{cx:104,cy:150,r:33,fill:'none',stroke:C_CLAY,'stroke-width':1,'stroke-dasharray':'2 3',opacity:0.55}));
+    add(txt([104,161],'H',{fill:C_DEEP,'font-family':'Fraunces,serif','font-size':'30','text-anchor':'middle','font-weight':'500'}));
+    add(line([156,150],[206,150],{stroke:C_SOFT,w:2}));
+    add(pathd('M199 144 L208 150 L199 156',{stroke:C_SOFT,w:2}));
+    add(txt([252,140],'x₁ x₂ x₃ …',{fill:C_SOFT,'font-family':'Inter,sans-serif','font-size':'12','text-anchor':'middle'}));
+    add(txt([250,182],'⟨x⟩ = 𝒜',{fill:C_INK,'font-family':'Fraunces,serif','font-size':'19','text-anchor':'middle'}));
+  }
+
+  // ---- landscape (the integrand with sharp peaks) ----
+  const PEAKS=[[0.17,1.0,0.045],[0.47,0.74,0.055],[0.79,0.92,0.042]];
+  function fval(u){ let s=0; PEAKS.forEach(p=>{const z=(u-p[0])/p[2]; s+=p[1]*Math.exp(-z*z);}); return Math.min(1,s); }
+  const X0=46,X1=282,BASE=250,AMP=160;
+  function curvePath(){ let d=''; for(let i=0;i<=140;i++){ const u=i/140, x=X0+(X1-X0)*u, y=BASE-AMP*fval(u);
+    d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)+' '; } return d; }
+  function axisCurve(){
+    add(line([X0,BASE],[X1,BASE],{stroke:C_LINE,w:1.4}));
+    add(pathd(curvePath(),{stroke:C_CLAY,w:2}));
+  }
+  function samples(us){ us.forEach(u=>{ const x=X0+(X1-X0)*u, y=BASE-AMP*fval(u);
+    add(line([x,BASE],[x,y],{stroke:C_DEEP,w:0.8,op:0.3})); add(dot([x,y],3,C_DEEP)); }); }
+  function drawSpiky(){
+    clear(); axisCurve();
+    const r=rng(7); samples(Array.from({length:14},()=>r()));
+    add(txt([164,300],'uniform points miss the peaks',LBL));
+  }
+  function drawImportance(){
+    clear(); axisCurve();
+    PEAKS.forEach(p=>{ const cx=X0+(X1-X0)*p[0], apex=BASE-AMP*p[1]*0.98, w=(X1-X0)*0.12;
+      add(line([cx-w,BASE],[cx,apex],{stroke:C_DEEP,w:1,op:0.5,dash:'3 3'}));
+      add(line([cx,apex],[cx+w,BASE],{stroke:C_DEEP,w:1,op:0.5,dash:'3 3'})); });
+    const r=rng(11), us=[]; for(let i=0;i<16;i++){ const p=PEAKS[i%3]; us.push(Math.max(0,Math.min(1,p[0]+(r()-0.5)*0.10))); }
+    samples(us);
+    add(txt([164,300],'tropical tents aim the samples',LBL));
+  }
+
+  // ---- 05 — a triangulation and its dual diagram ----
+  function drawDual(){
+    clear();
+    add(el('circle',{cx:CX,cy:CY,r:R,fill:C_WASH,'fill-opacity':0.4,stroke:C_CLAY,'stroke-width':1.8}));
+    const chords=[[0,2],[0,3],[0,4]];
+    chords.forEach(c=>add(line(V[c[0]],V[c[1]],{stroke:C_CLAY,w:1.4,op:0.45,dash:'4 3'})));
+    V.forEach(p=>add(dot(p,4,C_DEEP)));
+    const tris=[[0,1,2],[0,2,3],[0,3,4],[0,4,5]];
+    const cen=tris.map(t=>[(V[t[0]][0]+V[t[1]][0]+V[t[2]][0])/3,(V[t[0]][1]+V[t[1]][1]+V[t[2]][1])/3]);
+    for(let i=0;i<cen.length-1;i++) add(line(cen[i],cen[i+1],{stroke:C_DEEP,w:2}));
+    const beAdj=[[0,1,0],[1,2,0],[2,3,1],[3,4,2],[4,5,3],[5,0,3]];
+    beAdj.forEach(e=>{ const m=[(V[e[0]][0]+V[e[1]][0])/2,(V[e[0]][1]+V[e[1]][1])/2]; add(line(m,cen[e[2]],{stroke:C_DEEP,w:1.4,op:0.75})); });
+    cen.forEach(c=>add(dot(c,3.2,C_DEEP)));
+    add(txt([CX,308],'a triangulation and its dual diagram',LBL));
+  }
+
+  // ---- 06 — convergence ----
+  function drawConverge(){
+    clear();
+    const x0=48,x1=288,y0=74,y1=244,target=152;
+    add(line([x0,y1],[x1,y1],{stroke:C_LINE,w:1.4}));
+    add(line([x0,y0],[x0,y1],{stroke:C_LINE,w:1.4}));
+    add(line([x0,target],[x1,target],{stroke:C_CLAY,w:1.2,op:0.55,dash:'4 4'}));
+    add(txt([x1-1,target-7],'𝒜',{fill:C_CLAY,'font-family':'Fraunces,serif','font-size':'15','text-anchor':'end','font-style':'italic'}));
+    const r=rng(5); let d='';
+    for(let i=0;i<=130;i++){ const n=i+1, x=x0+(x1-x0)*(i/130);
+      let y=target+(r()-0.5)*168/Math.sqrt(n); y=Math.max(y0,Math.min(y1,y));
+      d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)+' '; }
+    add(pathd(d,{stroke:C_DEEP,w:1.5}));
+    add(txt([168,300],'the running average → 𝒜',LBL));
+  }
+
+  const draws=[drawIntegral, drawCoin, drawSpiky, drawImportance, drawDual, drawConverge];
+  stage=layerA; draws[0](); layerA.style.opacity='1'; layerB.style.opacity='0';
+  front=layerA; back=layerB;
+  let current=0;
+  function setStep(n){
+    stage=back; (draws[n]||draws[0])();
+    back.style.opacity='1'; front.style.opacity='0';
+    const tmp=front; front=back; back=tmp;
+  }
+  const steps=[...document.querySelectorAll('.step')];
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const n=+e.target.dataset.step;
+        steps.forEach(s=>s.classList.toggle('active', s===e.target));
+        if(n!==current){ current=n; setStep(n); }
+      }
+    });
+  }, {rootMargin:'-45% 0px -45% 0px', threshold:0});
+  steps.forEach(s=>io.observe(s));
+</script>
+</body>
+</html>
