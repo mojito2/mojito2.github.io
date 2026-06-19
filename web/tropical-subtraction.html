@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Computer Modern (the paper's title font) for the SubTropica wordmark -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@latest/font/Serif/cmun-serif.css">
 <style>
   :root{
     --paper:#FAF6EE; --ink:#2A2521; --inksoft:#6E6358; --inkfaint:#A99E8E;
@@ -31,11 +33,16 @@
   nav .links a.active{color:var(--clay);}
   @media(max-width:620px){ nav .links a:not(.active){display:none;} }
 
-  header.intro{padding:72px 0 8px;}
+  header.intro{min-height:calc(100vh - 56px); display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:0 24px;}
+  header.intro .inner{max-width:680px;}
   .eyebrow{font-size:12px; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--clay); margin:0 0 14px;}
   h1{font-family:var(--serif); font-weight:380; font-size:46px; line-height:1.02; letter-spacing:-.015em;
     margin:0; font-variation-settings:'SOFT' 60,'opsz' 144;}
-  .intro p{font-size:18px; color:var(--inksoft); max-width:60ch; margin:16px 0 0;}
+  .intro p{font-size:18px; color:var(--inksoft); max-width:60ch; margin:18px auto 0;}
+  .scroll-hint{margin-top:32px; color:var(--inkfaint); font-size:12px; letter-spacing:.2em; text-transform:uppercase;}
+  .scroll-hint span{display:block; font-size:18px; margin-top:6px; animation:bob 1.8s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)}}
   @media(max-width:620px){ h1{font-size:36px;} }
 
   /* scrollytelling */
@@ -43,8 +50,20 @@
   .graphic{position:sticky; top:0; height:100vh; display:flex; flex-direction:column;
     align-items:center; justify-content:center; gap:14px;}
   .stage{position:relative; width:min(420px,82%); aspect-ratio:1/1;}
-  .stage svg{position:absolute; inset:0; width:100%; height:100%; transition:opacity .3s ease;}
-  .caption{font-family:var(--serif); font-style:italic; color:var(--claydeep); font-size:15px; min-height:1.4em; text-align:center; transition:opacity .4s;}
+  .stage svg{position:absolute; inset:0; width:100%; height:100%; transition:opacity .55s ease;}
+  .eq{display:flex; align-items:center; justify-content:center; min-height:104px; width:100%;}
+  .eqrow{display:flex; flex-direction:column; align-items:center; gap:.1em;
+    font-family:var(--serif); color:var(--ink); font-size:clamp(15px,3vw,22px); line-height:1;}
+  .eqline{white-space:nowrap;}
+  .eqrow .I{font-size:1.3em; vertical-align:middle;}
+  .eqrow sup{font-size:.42em; vertical-align:super;}
+  .eqrow .op{display:inline-block; margin:0 .24em; vertical-align:middle;}
+  .eqrow .sub{color:var(--clay);} .eqrow .add{color:var(--claydeep);}
+  .eqrow .enc{display:inline-block; position:relative; padding:0 .42em; vertical-align:middle; margin:0 .03em;}
+  .eqrow .enc svg{display:block; width:1.8em; height:1.8em;}
+  .eqrow .enc::before,.eqrow .enc::after{content:''; position:absolute; top:.08em; bottom:.08em; width:.2em; border:.085em solid currentColor;}
+  .eqrow .enc::before{left:0; border-right:0;}
+  .eqrow .enc::after{right:0; border-left:0;}
 
   .steps{padding:18vh 0 22vh;}
   .step{min-height:82vh; display:flex; align-items:center;}
@@ -73,7 +92,7 @@
   .more{padding:18px 0 40px; color:var(--inkfaint); font-size:14.5px;}
   footer{border-top:1px solid var(--line); padding:26px 0 48px; color:var(--inkfaint); font-size:13px;}
   footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
-  @media(prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} .stage svg,.step .card,.caption{transition:none;} }
+  @media(prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} .stage svg,.step .card{transition:none;} .scroll-hint span{animation:none;} }
 </style>
 </head>
 <body>
@@ -91,12 +110,13 @@
 </nav>
 
 <header class="intro">
-  <div class="wrap">
+  <div class="inner">
     <p class="eyebrow">Demo · Tropical subtraction</p>
     <h1>Taming a Feynman integral</h1>
     <p>Feynman integrals are how we turn quantum field theory into numbers — but they are
       riddled with infinities. Here is how tropical geometry sorts those infinities into a
-      finite, computable list, and how the <em>SubTropica</em> package does it for you. Scroll down.</p>
+      finite, computable list, and how the <em>SubTropica</em> package does it for you.</p>
+    <div class="scroll-hint">scroll<span>&darr;</span></div>
   </div>
 </header>
 
@@ -105,9 +125,10 @@
     <!-- sticky visual -->
     <div class="graphic">
       <div class="stage">
-        <svg id="stage" viewBox="0 0 320 320" aria-hidden="true"></svg>
+        <svg id="stageA" viewBox="0 0 320 320" aria-hidden="true"></svg>
+        <svg id="stageB" viewBox="0 0 320 320" aria-hidden="true" style="opacity:0"></svg>
       </div>
-      <div class="caption" id="caption">a one-loop bubble</div>
+      <div class="eq" id="eq"></div>
     </div>
 
     <!-- steps -->
@@ -117,8 +138,8 @@
           <div class="num">01</div>
           <h3>Start with an integral</h3>
           <p>To turn quantum field theory into a number — a cross-section, a decay rate — we
-            evaluate Feynman integrals. Take the simplest loop, a bubble. Its value is not
-            finite: somewhere inside, it diverges.</p>
+            evaluate Feynman integrals. Take a one-loop box — four propagators closing into a
+            square. Its value is not finite: somewhere inside, it diverges.</p>
         </div>
       </div>
       <div class="step" data-step="1">
@@ -151,25 +172,33 @@
       <div class="step" data-step="4">
         <div class="card">
           <div class="num">05</div>
-          <h3>Tropicalize</h3>
-          <p>Its <em>normal fan</em> — the tropicalization of <em>U</em> and <em>F</em> — slices
-            the parameter space into cones. Each cone is one way the integral can blow up: a
-            single scaling region, with a single leading behaviour.</p>
+          <h3>Subtract a facet</h3>
+          <p>Each facet of the Newton polytope is one way the integral diverges. The scheme
+            subtracts a counterterm for it — geometrically, peel that facet off. What remains
+            is the polytope <em>minus</em> that piece.</p>
         </div>
       </div>
       <div class="step" data-step="5">
         <div class="card">
           <div class="num">06</div>
-          <h3>The subtraction scheme</h3>
-          <p>Now the move that names the paper. In each region, subtract a counterterm that
-            captures exactly that divergence and integrates in closed form. The fan tells you
-            which subtractions you need, and to what order. What remains is finite — safe to
-            integrate.</p>
+          <h3>Subtract another</h3>
+          <p>A neighbouring facet diverges too, so subtract its counterterm as well. But along
+            the edge where the two facets meet, that overlap has now been removed
+            <em>twice</em>.</p>
         </div>
       </div>
       <div class="step" data-step="6">
         <div class="card">
           <div class="num">07</div>
+          <h3>Add back the overlap</h3>
+          <p>Inclusion–exclusion fixes it: add back their common edge — the piece counted
+            twice. Carry on down the face lattice and every divergence is removed exactly once.
+            The remainder, <em>I</em><sup>ren</sup>, is finite.</p>
+        </div>
+      </div>
+      <div class="step" data-step="7">
+        <div class="card">
+          <div class="num">08</div>
           <h3>SubTropica</h3>
           <p>Run the pipeline and the poles drop out as a Laurent series in &epsilon;,
             coefficient by coefficient. <strong>SubTropica</strong> wraps it into a Mathematica
@@ -177,14 +206,14 @@
             geometry doing the bookkeeping.</p>
         </div>
       </div>
-      <div class="step" data-step="7">
+      <div class="step" data-step="8">
         <div class="card">
-          <div class="num">08</div>
+          <div class="num">09</div>
           <h3>Try it yourself</h3>
           <p>SubTropica is open and documented. Point it at your own integral and watch the
             &epsilon;-expansion come back — no tropical bookkeeping by hand.</p>
           <p style="margin-top:12px;">
-            <a href="https://www.subtropica.org" target="_blank" rel="noopener"><strong>subtropica.org&nbsp;&rarr;</strong></a>
+            <a href="https://subtropica.org" target="_blank" rel="noopener"><strong>subtropica.org&nbsp;&rarr;</strong></a>
           </p>
         </div>
       </div>
@@ -199,10 +228,10 @@
       by maxima and products by sums. For a Feynman integral that coarse shadow is exactly the
       data that controls its divergences. The two papers here turn the observation into a method:
       <em>The Tropical Geometry of Subtraction Schemes</em> sets up the framework, and
-      <a href="https://www.subtropica.org" target="_blank" rel="noopener"><em>SubTropica</em></a>
+      <a href="https://subtropica.org" target="_blank" rel="noopener"><em>SubTropica</em></a>
       (with M. Giroux &amp; S. Mizera) makes it run inside Mathematica.</p>
     <div class="papers">
-      <a href="https://www.subtropica.org" target="_blank" rel="noopener">subtropica.org&nbsp;&rarr;</a>
+      <a href="https://subtropica.org" target="_blank" rel="noopener">subtropica.org&nbsp;&rarr;</a>
       <a href="https://arxiv.org/abs/2406.14606">Tropical Geometry of Subtraction Schemes · arXiv:2406.14606&nbsp;&rarr;</a>
       <a href="https://arxiv.org/abs/2604.20954">SubTropica · arXiv:2604.20954&nbsp;&rarr;</a>
     </div>
@@ -235,7 +264,9 @@
         C_WASH='#F3EADC', C_CHIP='#EFE0D2', C_PAPER='#FAF6EE',
         C_INK='#2A2521', C_SOFT='#6E6358', C_LINE='#E8DDCC';
 
-  const stage=document.getElementById('stage');
+  const layerA=document.getElementById('stageA');
+  const layerB=document.getElementById('stageB');
+  let stage=layerA, front=layerA, back=layerB;   // two stacked layers for cross-fading
   function clear(){ while(stage.firstChild) stage.removeChild(stage.firstChild); }
   function el(name,attrs){const e=document.createElementNS(NS,name);
     for(const k in attrs) e.setAttribute(k,attrs[k]); return e;}
@@ -249,101 +280,182 @@
   function txt(p,s,o){const t=el('text',Object.assign({x:p[0],y:p[1]},o||{})); t.textContent=s; return t;}
   const LBL={fill:C_SOFT,'font-family':'Fraunces,serif','font-style':'italic','font-size':'14','text-anchor':'middle'};
 
-  const TRI=[[160,64],[64,248],[256,248]];
-
-  // 01 — one-loop bubble
-  function drawBubble(){
-    clear();
-    const yc=160;
-    add(line([40,yc],[110,yc],{stroke:C_DEEP,w:2}));
-    add(line([210,yc],[280,yc],{stroke:C_DEEP,w:2}));
-    add(el('path',{d:'M110,'+yc+' A50,50 0 0 1 210,'+yc, fill:'none', stroke:C_CLAY,'stroke-width':2.2}));
-    add(el('path',{d:'M110,'+yc+' A50,50 0 0 0 210,'+yc, fill:'none', stroke:C_CLAY,'stroke-width':2.2}));
-    add(dot([110,yc],4,C_DEEP), dot([210,yc],4,C_DEEP));
-  }
-
-  // 02 — Feynman-parameter simplex
-  function drawSimplex(showLabels){
-    clear();
-    add(poly(TRI,{fill:C_WASH,opacity:0.7}));
-    for(let i=0;i<3;i++) add(line(TRI[i],TRI[(i+1)%3],{stroke:C_CLAY,w:2}));
-    TRI.forEach(v=>add(dot(v,4,C_DEEP)));
-    if(showLabels){
-      add(txt([160,50],'x₁',LBL));
+  // the box has four Feynman parameters, so its parameter space is a 3-simplex
+  // (a tetrahedron). Drawn as a shaded solid: three facets meet at a front apex (TD),
+  // lit from the upper-left, over a soft ground shadow.
+  const TFACE=['#F8F1E6','#EBD9C1','#DDC2A1'];                  // lit · mid · shaded
+  const TA=[150,68], TB=[62,248], TC=[264,230], TD=[176,188];  // back-base ×3 + front apex
+  function tetra(labels){
+    add(el('ellipse',{cx:166,cy:268,rx:100,ry:13,fill:C_INK,opacity:0.07}));   // ground shadow
+    add(poly([TA,TB,TD],{fill:TFACE[0]}));     // left facet  (lit)
+    add(poly([TC,TA,TD],{fill:TFACE[1]}));     // right facet (mid)
+    add(poly([TB,TC,TD],{fill:TFACE[2]}));     // lower facet (shaded)
+    [TA,TB,TC].forEach(v=>add(line(TD,v,{stroke:C_DEEP,w:1.1,op:0.45})));       // edges to apex
+    add(line(TA,TB,{stroke:C_CLAY,w:2}));      // silhouette
+    add(line(TB,TC,{stroke:C_CLAY,w:2}));
+    add(line(TC,TA,{stroke:C_CLAY,w:2}));
+    [TA,TB,TC,TD].forEach(v=>add(dot(v,3.6,C_DEEP)));
+    if(labels){
+      add(txt([146,54],'x₁',LBL));
       add(txt([46,262],'x₂',LBL));
-      add(txt([274,262],'x₃',LBL));
+      add(txt([284,242],'x₃',LBL));
+      add(txt([196,182],'x₄',LBL));
     }
   }
 
-  // 03 — divergences on the boundary
+  // 01 — one-loop box
+  function drawBox(){
+    clear();
+    const lo=112, hi=208;                               // the square loop, centred on 160
+    const corners=[[lo,lo],[hi,lo],[hi,hi],[lo,hi]];
+    const legs=[[78,78],[242,78],[242,242],[78,242]];   // external legs out of each corner
+    for(let i=0;i<4;i++) add(line(corners[i],legs[i],{stroke:C_DEEP,w:2}));
+    for(let i=0;i<4;i++) add(line(corners[i],corners[(i+1)%4],{stroke:C_CLAY,w:2.2}));
+    corners.forEach(c=>add(dot(c,4,C_DEEP)));
+  }
+
+  // 02 — Feynman-parameter simplex (a tetrahedron)
+  function drawSimplex(showLabels){
+    clear();
+    tetra(showLabels);
+  }
+
+  // 03 — divergences on the boundary (halo on the corners *and* the edges)
   function drawDivergent(){
-    drawSimplex(false);
-    // glow the boundary, brightest at the corners
-    for(let i=0;i<3;i++) add(line(TRI[i],TRI[(i+1)%3],{stroke:C_CLAY,w:5,op:0.16}));
-    TRI.forEach(v=>{
-      add(dot(v,16,C_CLAY,{opacity:0.16}));
+    clear();
+    tetra(false);
+    const E=[[TA,TB],[TB,TC],[TC,TA],[TD,TA],[TD,TB],[TD,TC]];
+    // soft halo glow along every edge
+    E.forEach(e=>{ add(line(e[0],e[1],{stroke:C_CLAY,w:12,op:0.11}));
+                   add(line(e[0],e[1],{stroke:C_CLAY,w:6,op:0.22})); });
+    // restore the crisp edges on top of their glow
+    add(line(TA,TB,{stroke:C_CLAY,w:2}));
+    add(line(TB,TC,{stroke:C_CLAY,w:2}));
+    add(line(TC,TA,{stroke:C_CLAY,w:2}));
+    [TA,TB,TC].forEach(v=>add(line(TD,v,{stroke:C_DEEP,w:1.1,op:0.45})));
+    // halo on the corners
+    [TA,TB,TC,TD].forEach(v=>{
+      add(dot(v,15,C_CLAY,{opacity:0.16}));
       add(dot(v,9,C_CLAY,{opacity:0.30}));
       add(dot(v,4,C_DEEP));
     });
     add(txt([160,300],'xᵢ → 0',LBL));
   }
 
-  // Newton polytope (lattice + hull) and, optionally, its normal fan
-  const HULL=[[0,0],[3,0],[4,2],[2,4],[0,3]];
-  const S=34, OX=92, OY=238;
-  const lat=(u,v)=>[OX+u*S, OY-v*S];
-  function perpOutward(p,q,Cx,Cy){
-    const mx=(p[0]+q[0])/2, my=(p[1]+q[1])/2;
-    let nx=-(q[1]-p[1]), ny=(q[0]-p[0]);
-    const len=Math.hypot(nx,ny)||1; nx/=len; ny/=len;
-    if((mx-Cx)*nx+(my-Cy)*ny<0){ nx=-nx; ny=-ny; }
-    return {nx,ny};
+  // Newton polytope of U·F for the massless box, U=Σxᵢ, F=(−s)x₁x₃+(−t)x₂x₄.
+  // Computed (polymake-style hull): 8 vertices, 14 edges, 8 facets (4 triangles + 4 quads),
+  // a Minkowski sum of a tetrahedron and a segment. Embedded isometrically in 3D (so the base
+  // tetrahedron is regular and the solid looks fuller), centred at the origin.
+  const NV=[[-0.707,0.408,-1.443],[-0.707,-0.408,-0.289],[-1.414,0.816,-0.289],[0.707,-0.408,-0.289],[0.707,-1.225,0.866],[0,0.816,-0.289],[0,0,0.866],[1.414,0,0.866]];
+  const NF=[[4,6,7],[3,4,7],[0,1,2],[0,1,4,3],[2,5,7,6],[0,2,5],[1,2,6,4],[0,3,7,5]];
+  const NE=[[0,1],[0,2],[0,3],[0,5],[1,2],[1,4],[2,5],[2,6],[3,4],[3,7],[4,6],[4,7],[5,7],[6,7]];
+  const NC=[0,0,0];
+  const v3=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
+  const v3x=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+  const v3d=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  const v3n=a=>{const L=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/L,a[1]/L,a[2]/L];};
+  // camera orientation picked with the interactive widget — rows map world →
+  // (screen-x right, screen-y up, depth toward viewer)
+  const R=[[-0.0301,-0.2798,-0.9596],[0.7076,-0.684,0.1773],[-0.7059,-0.6737,0.2186]];
+  const rot=v=>[v3d(R[0],v),v3d(R[1],v),v3d(R[2],v)];
+  const LIGHT=v3n([-0.35,0.55,0.78]);         // key light in camera space (screen upper-left, toward viewer)
+  function lerpHex(h0,h1,t){
+    const p=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+    const a=p(h0),b=p(h1),q=x=>('0'+Math.max(0,Math.min(255,Math.round(x))).toString(16)).slice(-2);
+    return '#'+q(a[0]+(b[0]-a[0])*t)+q(a[1]+(b[1]-a[1])*t)+q(a[2]+(b[2]-a[2])*t);
   }
-  function drawNewton(showFan){
-    clear();
-    const hull=HULL.map(p=>lat(p[0],p[1]));
-    const cx=hull.reduce((s,p)=>s+p[0],0)/hull.length;
-    const cy=hull.reduce((s,p)=>s+p[1],0)/hull.length;
-    if(showFan){
-      const dirs=hull.map((p,i)=>{
-        const o=perpOutward(p,hull[(i+1)%hull.length],cx,cy);
-        return Object.assign(o,{a:Math.atan2(o.ny,o.nx)});
-      }).sort((A,B)=>A.a-B.a);
-      const RAD=180;
-      for(let i=0;i<dirs.length;i++){
-        const d0=dirs[i], d1=dirs[(i+1)%dirs.length];
-        const p0=[cx+d0.nx*RAD, cy+d0.ny*RAD];
-        const p1=[cx+d1.nx*RAD, cy+d1.ny*RAD];
-        add(poly([[cx,cy],p0,p1],{fill: i%2? C_WASH:C_CHIP, opacity:0.6}));
-      }
-      dirs.forEach(d=>add(line([cx,cy],[cx+d.nx*RAD,cy+d.ny*RAD],{stroke:C_CLAY,w:1.2,op:0.7,dash:'3 4'})));
+  function faceNormal(f){
+    let n=v3x(v3(NV[f[1]],NV[f[0]]),v3(NV[f[2]],NV[f[0]]));
+    const mid=[0,0,0]; f.forEach(i=>{mid[0]+=NV[i][0];mid[1]+=NV[i][1];mid[2]+=NV[i][2];});
+    const m=[mid[0]/f.length,mid[1]/f.length,mid[2]/f.length];
+    if(v3d(n,v3(m,NC))<0) n=[-n[0],-n[1],-n[2]];
+    return v3n(n);
+  }
+  // draw the polytope; optional highlights — subtracted facets and an added (common) edge
+  function drawPoly(o){
+    o=o||{};
+    const cx=o.cx||160, cy=o.cy||150, target=o.target||192;
+    const subF=o.subFacets||[], addE=o.addEdge||null;
+    let pr=NV.map(p=>{const r=rot(v3(p,NC)); return {x:r[0], y:-r[1], z:r[2]};});
+    const xs=pr.map(p=>p.x), ys=pr.map(p=>p.y);
+    const minx=Math.min(...xs),maxx=Math.max(...xs),miny=Math.min(...ys),maxy=Math.max(...ys);
+    const span=Math.max(maxx-minx,maxy-miny)||1, sc=target/span;
+    const ox=cx-(minx+maxx)/2*sc, oy=cy-(miny+maxy)/2*sc;
+    const PR=pr.map(p=>({X:ox+p.x*sc, Y:oy+p.y*sc, z:p.z}));
+    const hw=Math.max(...PR.map(p=>Math.abs(p.X-cx)));
+    add(el('ellipse',{cx:cx,cy:Math.max(...PR.map(p=>p.Y))+13,rx:hw*0.95,ry:11,fill:C_INK,opacity:0.06}));
+    const cenX=PR.reduce((s,p)=>s+p.X,0)/PR.length, cenY=PR.reduce((s,p)=>s+p.Y,0)/PR.length;
+    const faces=NF.map((f,i)=>{const rn=rot(faceNormal(f)); return {f,i,rn,vis:rn[2]>0,
+      depth:f.reduce((s,k)=>s+PR[k].z,0)/f.length};});
+    const vis=faces.filter(F=>F.vis);
+    // translucent shaded facets, so the hidden edges show through
+    vis.slice().sort((a,b)=>a.depth-b.depth).forEach(F=>{
+      const b=Math.max(0,v3d(F.rn,LIGHT));
+      add(poly(F.f.map(i=>[PR[i].X,PR[i].Y]),{fill:lerpHex('#D9BE9C','#F8F1E6',0.22+0.78*b),opacity:0.5}));
+    });
+    const seg=e=>[[PR[e[0]].X,PR[e[0]].Y],[PR[e[1]].X,PR[e[1]].Y]];
+    const isVis=e=>vis.some(F=>F.f.includes(e[0])&&F.f.includes(e[1]));
+    NE.forEach(e=>{ if(!isVis(e)){const s=seg(e); add(line(s[0],s[1],{stroke:C_DEEP,w:1.1,op:0.5,dash:'3 4'}));} });
+    NE.forEach(e=>{ if(isVis(e)){const s=seg(e); add(line(s[0],s[1],{stroke:C_CLAY,w:1.8}));} });
+    const visV=new Set(); vis.forEach(F=>F.f.forEach(i=>visV.add(i)));
+    PR.forEach((p,i)=> add(dot([p.X,p.Y], visV.has(i)?3.4:3, C_DEEP, visV.has(i)?{}:{opacity:0.5})));
+    // subtracted facets — "unglued": lift each off the solid, dashed boundary
+    subF.forEach(fi=>{ const f=NF[fi]; const pts=f.map(i=>[PR[i].X,PR[i].Y]);
+      const fcx=pts.reduce((s,p)=>s+p[0],0)/pts.length, fcy=pts.reduce((s,p)=>s+p[1],0)/pts.length;
+      let dx=fcx-cenX, dy=fcy-cenY; const L=Math.hypot(dx,dy)||1; dx=dx/L*22; dy=dy/L*22;
+      add(poly(pts.map(p=>[p[0]+dx,p[1]+dy]),{fill:C_CLAY,opacity:0.5,stroke:C_DEEP,'stroke-width':1.4,'stroke-dasharray':'4 3','stroke-linejoin':'round'}));
+    });
+    // added (common) edge — lifted "a bit" off the solid (no + sign in the figure)
+    if(addE){ const s=seg(addE);
+      const mx=(s[0][0]+s[1][0])/2, my=(s[0][1]+s[1][1])/2;
+      let dx=mx-cenX, dy=my-cenY; const L=Math.hypot(dx,dy)||1; dx=dx/L*12; dy=dy/L*12;
+      const a=[s[0][0]+dx,s[0][1]+dy], b=[s[1][0]+dx,s[1][1]+dy];
+      add(line(a,b,{stroke:C_DEEP,w:9,op:0.22}));
+      add(line(a,b,{stroke:C_DEEP,w:3}));
     }
-    // faint lattice (the monomials)
-    for(let u=0;u<=4;u++) for(let v=0;v<=4;v++) add(dot(lat(u,v),1.6,C_FAINT,{opacity:0.55}));
-    // the polytope, masking the centre of the fan
-    add(poly(hull,{fill:C_PAPER, opacity: showFan?0.92:0.82}));
-    for(let i=0;i<hull.length;i++) add(line(hull[i],hull[(i+1)%hull.length],{stroke:C_CLAY,w:2}));
-    hull.forEach(p=>add(dot(p,3.6,C_DEEP)));
   }
+  function drawNewton(){ clear(); drawPoly(); }
 
-  // 06 — subtract, region by region
-  function drawSubtraction(){
-    clear();
-    const g=[(TRI[0][0]+TRI[1][0]+TRI[2][0])/3,(TRI[0][1]+TRI[1][1]+TRI[2][1])/3];
-    const fills=[C_WASH,C_CHIP,'#F7EFE3'];
-    for(let i=0;i<3;i++) add(poly([TRI[i],TRI[(i+1)%3],g],{fill:fills[i],opacity:0.9}));
-    for(let i=0;i<3;i++) add(line(TRI[i],g,{stroke:C_DEEP,w:1.2,op:0.5,dash:'4 4'}));
-    for(let i=0;i<3;i++) add(line(TRI[i],TRI[(i+1)%3],{stroke:C_CLAY,w:2}));
-    TRI.forEach(v=>add(dot(v,4,C_DEEP)));
-    // one region's counterterm peeling away
-    const region=[TRI[0],TRI[1],g];
-    add(poly(region.map(p=>[p[0]+16,p[1]-16]),{fill:'none',stroke:C_DEEP,'stroke-width':1.4,'stroke-dasharray':'3 4',opacity:0.65}));
-    add(dot(TRI[0],14,C_CLAY,{opacity:0.18}));
-    add(txt([232,116],'−',{fill:C_DEEP,'font-family':'Fraunces,serif','font-size':'30','font-weight':'500','text-anchor':'middle'}));
+  // tiny polytope as an inline-SVG string that scales with the surrounding font
+  function miniSVG(hi){
+    hi=hi||{};
+    const pr=NV.map(p=>{const r=rot(v3(p,NC)); return [r[0],-r[1],r[2]];});
+    const xs=pr.map(p=>p[0]),ys=pr.map(p=>p[1]);
+    const mnx=Math.min(...xs),mxx=Math.max(...xs),mny=Math.min(...ys),mxy=Math.max(...ys);
+    const sp=Math.max(mxx-mnx,mxy-mny)||1, sc=84/sp;
+    const ox=50-(mnx+mxx)/2*sc, oy=50-(mny+mxy)/2*sc;
+    const P=pr.map(p=>[(ox+p[0]*sc).toFixed(1),(oy+p[1]*sc).toFixed(1)]);
+    const vis=NF.filter(f=>rot(faceNormal(f))[2]>0);
+    let s='<svg viewBox="0 0 100 100">';
+    vis.forEach(f=> s+='<polygon points="'+f.map(i=>P[i].join(',')).join(' ')+'" fill="#EBD9C1" fill-opacity="0.85"/>');
+    if(hi.facet!=null) s+='<polygon points="'+NF[hi.facet].map(i=>P[i].join(',')).join(' ')+'" fill="#C2693F" fill-opacity="0.72"/>';
+    const isV=e=>vis.some(f=>f.includes(e[0])&&f.includes(e[1]));
+    NE.forEach(e=>{ if(isV(e)) s+='<line x1="'+P[e[0]][0]+'" y1="'+P[e[0]][1]+'" x2="'+P[e[1]][0]+'" y2="'+P[e[1]][1]+'" stroke="#A8542F" stroke-width="1"/>'; });
+    if(hi.edge) s+='<line x1="'+P[hi.edge[0]][0]+'" y1="'+P[hi.edge[0]][1]+'" x2="'+P[hi.edge[1]][0]+'" y2="'+P[hi.edge[1]][1]+'" stroke="#A8542F" stroke-width="3"/>';
+    return s+'</svg>';
   }
+  // the renormalised integrand 𝓘ʳᵉⁿ, rendered big as HTML below the figure
+  const FAC1=3, FAC2=6, CEDGE=[1,4];          // the two front quad facets + their shared edge
+  function termHTML(ren,hi){   // 𝓘[ tiny polytope ] with square brackets encasing the glyph
+    return '<span class="I">𝓘'+(ren?'<sup>ren</sup>':'')+'</span><span class="enc">'+miniSVG(hi)+'</span>';
+  }
+  function eqHTML(terms){
+    let rhs=termHTML(false,{});
+    terms.forEach(t=>{ rhs+='<span class="'+t.cls+'"><span class="op">'+t.op+'</span>'+termHTML(false,t.hi)+'</span>'; });
+    return '<span class="eqline">'+termHTML(true,{})+'<span class="op">=</span></span>'
+         + '<span class="eqline">'+rhs+'</span>';
+  }
+  function setEq(h){ document.getElementById('eq').innerHTML='<span class="eqrow">'+h+'</span>'; }
+  const OPM=' − ', OPP=' + ';
+  function drawSub1(){ clear(); drawPoly({subFacets:[FAC1]});
+    setEq(eqHTML([{op:OPM,hi:{facet:FAC1},cls:'sub'}])); }
+  function drawSub2(){ clear(); drawPoly({subFacets:[FAC1,FAC2]});
+    setEq(eqHTML([{op:OPM,hi:{facet:FAC1},cls:'sub'},{op:OPM,hi:{facet:FAC2},cls:'sub'}])); }
+  function drawSub3(){ clear(); drawPoly({subFacets:[FAC1,FAC2],addEdge:CEDGE});
+    setEq(eqHTML([{op:OPM,hi:{facet:FAC1},cls:'sub'},{op:OPM,hi:{facet:FAC2},cls:'sub'},{op:OPP,hi:{edge:CEDGE},cls:'add'}])); }
 
   // a clickable pill linking out to the package site
-  const SUB_URL='https://www.subtropica.org';
+  const SUB_URL='https://subtropica.org';
   function linkPill(x,y,w,h,label,o){o=o||{};
     const a=el('a',{href:SUB_URL,target:'_blank',rel:'noopener'});
     a.setAttribute('aria-label','Open subtropica.org');
@@ -356,22 +468,6 @@
     return a;
   }
 
-  // the heptagon signature motif (a vertex of the associahedron)
-  function heptagonGroup(){
-    const g=el('g',{transform:'translate(96,38) scale(1.28)'});
-    g.appendChild(el('polygon',{points:'50,6 88,26 95,66 68,95 32,95 5,66 12,26',
-      stroke:C_CLAY,'stroke-width':1.1,fill:C_WASH,'stroke-linejoin':'round'}));
-    const chords=el('g',{stroke:C_CLAY,'stroke-width':0.9,opacity:'0.6'});
-    [['50','6','32','95'],['50','6','68','95'],['50','6','5','66'],['50','6','95','66']]
-      .forEach(c=>chords.appendChild(el('line',{x1:c[0],y1:c[1],x2:c[2],y2:c[3]})));
-    g.appendChild(chords);
-    const verts=el('g',{fill:C_CLAY});
-    [['50','6'],['88','26'],['95','66'],['68','95'],['32','95'],['5','66'],['12','26']]
-      .forEach(v=>verts.appendChild(el('circle',{cx:v[0],cy:v[1],r:'2.1'})));
-    g.appendChild(verts);
-    return g;
-  }
-
   // 07 — the epsilon-expansion
   function drawResult(){
     clear();
@@ -382,41 +478,78 @@
     add(linkPill(106,230,108,30,'SubTropica'));
   }
 
-  // 08 — the call to action
+  // 08 — a "screenshot" of the subtropica.org page (clickable)
   function drawFinal(){
     clear();
-    add(heptagonGroup());
-    add(linkPill(76,210,168,44,'subtropica.org →',{fill:C_CLAY,color:C_PAPER,fs:17,italic:false}));
-    add(txt([160,284],'the package, online',LBL));
+    const a=el('a',{href:SUB_URL,target:'_blank',rel:'noopener'});
+    a.setAttribute('aria-label','Open subtropica.org');
+    a.style.cursor='pointer';
+    const put=node=>a.appendChild(node);
+    function t(x,y,s,o){const n=el('text',Object.assign({x:x,y:y},o)); n.textContent=s; put(n); }
+    function mono(x,y,s,o){t(x,y,s,Object.assign({'font-family':'ui-monospace,Menlo,monospace','font-size':'9'},o||{}));}
+    function miniBox(cx,cy,s){                         // a tiny one-loop box, drawn in-line
+      const c=[[cx-s,cy-s],[cx+s,cy-s],[cx+s,cy+s],[cx-s,cy+s]], g=s*0.7;
+      const legs=[[cx-s-g,cy-s-g],[cx+s+g,cy-s-g],[cx+s+g,cy+s+g],[cx-s-g,cy+s+g]];
+      for(let i=0;i<4;i++) put(el('line',{x1:c[i][0],y1:c[i][1],x2:legs[i][0],y2:legs[i][1],stroke:C_DEEP,'stroke-width':1,'stroke-linecap':'round'}));
+      for(let i=0;i<4;i++) put(el('line',{x1:c[i][0],y1:c[i][1],x2:c[(i+1)%4][0],y2:c[(i+1)%4][1],stroke:C_CLAY,'stroke-width':1.2,'stroke-linecap':'round'}));
+    }
+    function frac(xL,w,cy,num,den){                    // a stacked fraction num/den
+      const cx=xL+w/2;
+      put(el('line',{x1:xL+1,y1:cy,x2:xL+w-1,y2:cy,stroke:C_INK,'stroke-width':0.9}));
+      mono(cx,cy-4,num,{fill:C_INK,'text-anchor':'middle'});
+      mono(cx,cy+9,den,{fill:C_INK,'text-anchor':'middle'});
+    }
+    // window + browser chrome
+    put(el('rect',{x:34,y:60,width:252,height:200,rx:16,fill:C_PAPER,stroke:C_LINE,'stroke-width':1.5}));
+    put(el('line',{x1:34,y1:90,x2:286,y2:90,stroke:C_LINE,'stroke-width':1}));
+    [[52,C_CLAY],[64,'#D2996F'],[76,C_FAINT]].forEach(d=>put(el('circle',{cx:d[0],cy:75,r:3.4,fill:d[1]})));
+    put(el('rect',{x:98,y:68,width:160,height:15,rx:7.5,fill:C_WASH}));
+    t(178,79,'subtropica.org',{fill:C_SOFT,'font-family':'Inter,sans-serif','font-size':'9','text-anchor':'middle'});
+    // title (paper style) — Computer Modern bold, with a (slightly smaller) coconut for the "o"
+    const title=el('text',{x:160,y:125,fill:C_INK,'font-family':"'Computer Modern Serif',Georgia,serif",'font-size':'24','font-weight':'bold','text-anchor':'middle'});
+    title.appendChild(document.createTextNode('SubTr'));
+    const coco=el('tspan',{'font-size':'18'}); coco.textContent='🥥'; title.appendChild(coco);
+    title.appendChild(document.createTextNode('pica'));
+    put(title);
+    t(160,142,'symbolic integration via tropical geometry',{fill:C_SOFT,'font-family':'Inter,sans-serif','font-size':'9','text-anchor':'middle'});
+    // a Mathematica cell: STIntegrate[ box ]  ->  the ε-expansion (stacked fractions)
+    put(el('rect',{x:42,y:158,width:236,height:74,rx:10,fill:C_WASH,stroke:C_LINE,'stroke-width':1}));
+    mono(54,180,'In[1]:= STIntegrate[',{fill:C_SOFT});
+    miniBox(174,176,7);
+    mono(188,180,']',{fill:C_SOFT});
+    const cy=212;
+    mono(54,cy+3,'Out[1]=',{fill:C_SOFT});
+    frac(99,14,cy,'1','ε²');
+    frac(116,14,cy,'4','st');
+    mono(134,cy+3,'+',{fill:C_INK});
+    frac(144,10,cy,'1','ε');
+    frac(157,47,cy,'Log[s/t]','st');
+    mono(208,cy+3,'+',{fill:C_INK});
+    mono(216,cy+3,'𝒪(ε⁰)',{fill:C_INK});
+    add(a);
   }
 
   // ---- step driver ----
-  const captions=[
-    'a one-loop bubble',
-    'the Feynman-parameter simplex',
-    'divergences live on the boundary',
-    'the Newton polytope',
-    'its normal fan — one cone per scaling region',
-    'subtract, region by region',
-    'the ε-expansion, computed',
-    'subtropica.org — try it yourself'
-  ];
-  const caption=document.getElementById('caption');
   const draws=[
-    ()=>drawBubble(),
+    ()=>drawBox(),
     ()=>drawSimplex(true),
     ()=>drawDivergent(),
-    ()=>drawNewton(false),
-    ()=>drawNewton(true),
-    ()=>drawSubtraction(),
+    ()=>drawNewton(),
+    ()=>drawSub1(),
+    ()=>drawSub2(),
+    ()=>drawSub3(),
     ()=>drawResult(),
     ()=>drawFinal()
   ];
+  // draw the first figure into layer A (no fade); later steps cross-fade in
+  stage=layerA; (draws[0])(); layerA.style.opacity='1'; layerB.style.opacity='0';
+  front=layerA; back=layerB;
   function setStep(n){
-    caption.textContent = captions[n] || '';
-    (draws[n] || draws[0])();
+    document.getElementById('eq').innerHTML='';   // the equation is per-step (set by drawSub*)
+    stage=back; (draws[n] || draws[0])();    // render into the hidden layer …
+    back.style.opacity='1'; front.style.opacity='0';
+    const tmp=front; front=back; back=tmp;   // … then cross-fade it to the front
   }
-  setStep(0);
 
   const steps=[...document.querySelectorAll('.step')];
   let current=0;

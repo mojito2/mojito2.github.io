@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Demos — Giulio Salvatori</title>
-<meta name="description" content="Interactive demos. Scroll through the associahedron: how triangulations of a polygon become the vertices of a polytope.">
+<meta name="description" content="Interactive demos from my work: the associahedron (surfaceology), the tropical subtraction scheme (SubTropica), and dual sampling.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -38,39 +38,29 @@
   .intro p{font-size:18px; color:var(--inksoft); max-width:60ch; margin:16px 0 0;}
   @media(max-width:620px){ h1{font-size:36px;} }
 
-  /* scrollytelling */
-  .scrolly{position:relative; display:grid; grid-template-columns:1.05fr .95fr; gap:48px; margin-top:24px;}
-  .graphic{position:sticky; top:0; height:100vh; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; gap:14px;}
-  .stage{position:relative; width:min(420px,82%); aspect-ratio:1/1;}
-  .stage svg{position:absolute; inset:0; width:100%; height:100%; transition:opacity .5s ease;}
-  #polyLayer{opacity:1;} #graphLayer{opacity:0;}
-  .caption{font-family:var(--serif); font-style:italic; color:var(--claydeep); font-size:15px; min-height:1.4em; text-align:center; transition:opacity .4s;}
+  /* gallery */
+  .gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin:34px 0 8px;}
+  .panel{position:relative; display:flex; flex-direction:column; color:var(--ink);
+    background:linear-gradient(180deg,#fff7,var(--wash)); border:1px solid var(--line);
+    border-radius:18px; padding:18px;
+    transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;}
+  a.panel:hover{transform:translateY(-3px); border-color:var(--clay);
+    box-shadow:0 12px 30px -20px rgba(42,37,33,.55);}
+  .panel .fig{aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;
+    background:var(--paper); border:1px solid var(--line); border-radius:12px; margin-bottom:15px;}
+  .panel .fig svg{width:80%; height:80%;}
+  .panel h3{font-family:var(--serif); font-weight:480; font-size:21px; margin:.1em 0 .3em; letter-spacing:-.01em;}
+  .panel p{margin:0; color:var(--inksoft); font-size:14.5px;}
+  .panel.soon{opacity:.74;}
+  .panel .tag{position:absolute; top:15px; right:15px; background:var(--chip); color:var(--claydeep);
+    font-size:10.5px; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+    padding:4px 9px; border-radius:999px;}
+  @media(max-width:760px){ .gallery{grid-template-columns:1fr;} }
 
-  .steps{padding:18vh 0 22vh;}
-  .step{min-height:82vh; display:flex; align-items:center;}
-  .step .card{background:linear-gradient(180deg,#fff7,var(--wash)); border:1px solid var(--line);
-    border-radius:16px; padding:22px 24px; opacity:.32; transform:translateY(8px);
-    transition:opacity .4s ease, transform .4s ease;}
-  .step.active .card{opacity:1; transform:none;}
-  .step .num{font-family:var(--serif); color:var(--clay); font-size:14px; letter-spacing:.02em;}
-  .step h3{font-family:var(--serif); font-weight:480; font-size:23px; margin:.25em 0 .35em; letter-spacing:-.01em;}
-  .step p{margin:.4em 0; color:var(--inksoft);}
-
-  @media(max-width:760px){
-    .scrolly{grid-template-columns:1fr; gap:0;}
-    .graphic{height:56vh; top:56px; background:linear-gradient(180deg,var(--paper),color-mix(in srgb,var(--paper) 80%,transparent));}
-    .steps{padding:4vh 0 18vh;}
-    .step{min-height:70vh;}
-  }
-
-  .closing{border-top:1px solid var(--line); padding:40px 0 12px; margin-top:8px;}
-  .closing h2{font-family:var(--serif); font-weight:440; font-size:26px; margin:.2em 0 .4em;}
-  .closing p{color:var(--inksoft); max-width:62ch;}
-  .more{padding:18px 0 40px; color:var(--inkfaint); font-size:14.5px;}
+  .more{padding:22px 0 44px; color:var(--inkfaint); font-size:14.5px;}
   footer{border-top:1px solid var(--line); padding:26px 0 48px; color:var(--inkfaint); font-size:13px;}
   footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
-  @media(prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} .stage svg,.step .card,.caption{transition:none;} }
+  @media(prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} .panel{transition:none;} }
 </style>
 </head>
 <body>
@@ -90,94 +80,91 @@
 <header class="intro">
   <div class="wrap">
     <p class="eyebrow">Demos</p>
-    <h1>The associahedron, by scrolling</h1>
-    <p>A short scroll-through of one idea from my work: how the humble act of cutting a polygon
-      into triangles builds a polytope that organizes scattering amplitudes. Scroll down.</p>
+    <h1>Things you can scroll</h1>
+    <p>A few ideas from my work, each turned into a short, dependency-free scroll-through.
+      Pick one.</p>
   </div>
 </header>
 
 <div class="wrap">
-  <div class="scrolly">
-    <!-- sticky visual -->
-    <div class="graphic">
-      <div class="stage">
-        <svg id="polyLayer" viewBox="0 0 320 320" aria-hidden="true"></svg>
-        <svg id="graphLayer" viewBox="0 0 320 320" aria-hidden="true"></svg>
+  <div class="gallery">
+
+    <a class="panel" href="associahedron.html">
+      <div class="fig">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <polygon points="60,14 99.8,37 99.8,83 60,106 20.2,83 20.2,37"
+            fill="#F3EADC" stroke="#C2693F" stroke-width="2" stroke-linejoin="round"/>
+          <g stroke="#A8542F" stroke-width="1.3" opacity="0.6">
+            <line x1="60" y1="14" x2="99.8" y2="83"/>
+            <line x1="60" y1="14" x2="60" y2="106"/>
+            <line x1="60" y1="14" x2="20.2" y2="83"/>
+          </g>
+          <g fill="#C2693F">
+            <circle cx="60" cy="14" r="2.7"/><circle cx="99.8" cy="37" r="2.7"/>
+            <circle cx="99.8" cy="83" r="2.7"/><circle cx="60" cy="106" r="2.7"/>
+            <circle cx="20.2" cy="83" r="2.7"/><circle cx="20.2" cy="37" r="2.7"/>
+          </g>
+        </svg>
       </div>
-      <div class="caption" id="caption">a hexagon</div>
+      <h3>Surfaceology</h3>
+      <p>Scroll through the associahedron — how triangulating a polygon builds the polytope
+        behind tree-level scattering amplitudes.</p>
+    </a>
+
+    <a class="panel" href="tropical-subtraction.html">
+      <div class="fig">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <polygon points="60,18 22,98 98,98"
+            fill="#F3EADC" stroke="#C2693F" stroke-width="2" stroke-linejoin="round"/>
+          <g stroke="#A8542F" stroke-width="1.1" opacity="0.5" stroke-dasharray="3 3">
+            <line x1="60" y1="18" x2="60" y2="71.3"/>
+            <line x1="22" y1="98" x2="60" y2="71.3"/>
+            <line x1="98" y1="98" x2="60" y2="71.3"/>
+          </g>
+          <g fill="#C2693F">
+            <circle cx="60" cy="18" r="6.5" opacity="0.16"/>
+            <circle cx="22" cy="98" r="6.5" opacity="0.16"/>
+            <circle cx="98" cy="98" r="6.5" opacity="0.16"/>
+            <circle cx="60" cy="18" r="2.7"/><circle cx="22" cy="98" r="2.7"/>
+            <circle cx="98" cy="98" r="2.7"/>
+          </g>
+        </svg>
+      </div>
+      <h3>SubTropica</h3>
+      <p>Taming a Feynman integral: tropical geometry sorts its divergences into a finite,
+        computable list.</p>
+    </a>
+
+    <div class="panel soon" aria-disabled="true">
+      <span class="tag">Coming soon</span>
+      <div class="fig">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <rect x="20" y="22" width="80" height="76" rx="12"
+            fill="#F3EADC" stroke="#E8DDCC" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <line x1="60" y1="22" x2="60" y2="98" stroke="#A99E8E" stroke-width="1"
+            opacity="0.55" stroke-dasharray="2 4"/>
+          <g>
+            <circle cx="42" cy="42" r="2.7" fill="#C2693F"/>
+            <circle cx="78" cy="42" r="2.7" fill="#A99E8E"/>
+            <circle cx="34" cy="60" r="2.7" fill="#A99E8E"/>
+            <circle cx="86" cy="60" r="2.7" fill="#C2693F"/>
+            <circle cx="46" cy="52" r="2.7" fill="#C2693F"/>
+            <circle cx="74" cy="52" r="2.7" fill="#A99E8E"/>
+            <circle cx="50" cy="80" r="2.7" fill="#A99E8E"/>
+            <circle cx="70" cy="80" r="2.7" fill="#C2693F"/>
+            <circle cx="60" cy="68" r="2.7" fill="#A8542F"/>
+          </g>
+        </svg>
+      </div>
+      <h3>Dual Sampling</h3>
+      <p>A new demo, in the works — we'll design this one soon.</p>
     </div>
 
-    <!-- steps -->
-    <div class="steps" id="steps">
-      <div class="step" data-step="0">
-        <div class="card">
-          <div class="num">01</div>
-          <h3>Start with a polygon</h3>
-          <p>Take a convex hexagon — just six points and the edges between them. Nothing
-            happening yet. This is our raw material.</p>
-        </div>
-      </div>
-      <div class="step" data-step="1">
-        <div class="card">
-          <div class="num">02</div>
-          <h3>Cut it into triangles</h3>
-          <p>Draw non-crossing chords until the inside is carved into triangles. That's a
-            <em>triangulation</em>. A hexagon always needs exactly three chords.</p>
-        </div>
-      </div>
-      <div class="step" data-step="2">
-        <div class="card">
-          <div class="num">03</div>
-          <h3>Flip a single chord</h3>
-          <p>Swap one chord for the other diagonal of the quadrilateral it splits — a
-            <em>flip</em>. One small move, and you land on a neighbouring triangulation
-            (the changed chord is highlighted).</p>
-        </div>
-      </div>
-      <div class="step" data-step="3">
-        <div class="card">
-          <div class="num">04</div>
-          <h3>Count them all</h3>
-          <p>How many triangulations does a hexagon have? Exactly <strong>fourteen</strong> —
-            the fourth Catalan number. Here they all are, one after another.</p>
-        </div>
-      </div>
-      <div class="step" data-step="4">
-        <div class="card">
-          <div class="num">05</div>
-          <h3>Connect the flips</h3>
-          <p>Make every triangulation a point, and join two points whenever a single flip
-            takes one to the other. Those fourteen points and twenty-one connections are the
-            edges and corners of a single shape: the <strong>associahedron</strong>.</p>
-        </div>
-      </div>
-    </div>
   </div>
-</div>
 
-<div class="wrap">
-  <div class="closing">
-    <h2>Why a physicist cares</h2>
-    <p>The associahedron is a <em>positive geometry</em>: a shape whose combinatorial boundary
-      encodes a physical quantity. For a large class of theories, the scattering amplitude at
-      tree level is read directly off this polytope — and richer cousins, built from curves on
-      surfaces, carry the same story to all loop orders. The polygon you just triangulated is,
-      quite literally, where the physics lives.</p>
-    <p style="margin-top:14px;">
-      <a href="https://arxiv.org/abs/2503.07707">All Loop Scattering as a Sampling Problem&nbsp;&rarr;</a>
-      &nbsp;·&nbsp;
-      <a href="index.html#work">More of my work&nbsp;&rarr;</a>
-    </p>
-  </div>
-  <div class="closing" style="margin-top:0;">
-    <h2>More to scroll</h2>
-    <p><a href="tropical-subtraction.html">Taming a Feynman integral&nbsp;&rarr;</a> — how tropical
-      geometry sorts the divergences of a Feynman integral into a finite, computable list (the
-      tropical subtraction scheme and the <em>SubTropica</em> package).</p>
-  </div>
   <div class="more">
-    More demos will live here. This page is a dependency-free scrollytelling pattern
-    (an <code>IntersectionObserver</code> drives the sticky visual) — easy to extend with
+    Each demo is a self-contained page using a dependency-free scrollytelling pattern
+    (an <code>IntersectionObserver</code> drives a sticky visual) — easy to extend with
     new stories.
   </div>
 </div>
@@ -189,150 +176,6 @@
   </div>
 </footer>
 
-<script>
-  document.getElementById('yr').textContent = new Date().getFullYear();
-  const NS='http://www.w3.org/2000/svg';
-  const N=6, CX=160, CY=160, R=120;
-
-  // ---- triangulations of the hexagon ----
-  function triangulations(n){
-    const memo=new Map();
-    function rec(i,j){
-      const key=i+','+j; if(memo.has(key))return memo.get(key);
-      let res;
-      if(j-i<2){res=[[]];}
-      else{res=[];
-        for(let k=i+1;k<j;k++){const L=rec(i,k),R=rec(k,j);
-          for(const a of L)for(const b of R){const d=[...a,...b];
-            if(k-i>=2)d.push([i,k]); if(j-k>=2)d.push([k,j]); res.push(d);}}}
-      memo.set(key,res); return res;
-    }
-    const raw=rec(0,n-1), seen=new Set(), uniq=[];
-    raw.forEach(t=>{const keys=t.map(d=>d[0]+'-'+d[1]).sort();
-      const sig=keys.join('|'); if(!seen.has(sig)){seen.add(sig); uniq.push(keys);}});
-    return uniq;
-  }
-  const TRIS = triangulations(N);                       // array of [ "a-b", ... ]
-  const verts = Array.from({length:N},(_,k)=>{
-    const a=-Math.PI/2 + k*2*Math.PI/N;
-    return [CX+R*Math.cos(a), CY+R*Math.sin(a)];
-  });
-  const keyToPts = k => k.split('-').map(Number);
-
-  // fan triangulation (from vertex 0) and a flip-neighbour of it
-  const fanIdx = TRIS.findIndex(t => t.join('|') === ['0-2','0-3','0-4'].sort().join('|'));
-  function diffKeys(a,b){const sb=new Set(b); return a.filter(x=>!sb.has(x));}
-  let neighbourIdx=-1, addedKey=null;
-  for(let j=0;j<TRIS.length;j++){
-    if(j===fanIdx) continue;
-    const added = diffKeys(TRIS[j],TRIS[fanIdx]);   // in j, not in fan
-    const removed = diffKeys(TRIS[fanIdx],TRIS[j]); // in fan, not in j
-    if(added.length===1 && removed.length===1){ neighbourIdx=j; addedKey=added[0]; break; }
-  }
-
-  // ---- polygon SVG ----
-  const polyL=document.getElementById('polyLayer');
-  function seg(p,q,stroke,w,op){const l=document.createElementNS(NS,'line');
-    l.setAttribute('x1',p[0]);l.setAttribute('y1',p[1]);l.setAttribute('x2',q[0]);l.setAttribute('y2',q[1]);
-    l.setAttribute('stroke',stroke);l.setAttribute('stroke-width',w);l.setAttribute('stroke-linecap','round');
-    if(op!=null)l.setAttribute('opacity',op);return l;}
-  function drawPoly(triIdx, highlightKey){
-    polyL.innerHTML='';
-    for(let k=0;k<N;k++) polyL.appendChild(seg(verts[k],verts[(k+1)%N],'#C2693F',1.8));
-    if(triIdx!=null && triIdx>=0){
-      for(const key of TRIS[triIdx]){
-        const [a,b]=keyToPts(key);
-        const hot = key===highlightKey;
-        polyL.appendChild(seg(verts[a],verts[b], hot?'#C2693F':'#A8542F', hot?2.6:1.3, hot?1:.55));
-      }
-    }
-    for(const v of verts){const c=document.createElementNS(NS,'circle');
-      c.setAttribute('cx',v[0]);c.setAttribute('cy',v[1]);c.setAttribute('r','3.4');c.setAttribute('fill','#C2693F');polyL.appendChild(c);}
-  }
-
-  // ---- flip graph (the associahedron 1-skeleton), force-laid ----
-  function buildGraph(){
-    const E=[];
-    for(let i=0;i<TRIS.length;i++)for(let j=i+1;j<TRIS.length;j++){
-      const a=new Set(TRIS[i]); let only=0;
-      for(const x of TRIS[j]) if(!a.has(x)) only++;
-      if(only===1 && TRIS[i].length===TRIS[j].length) E.push([i,j]);
-    }
-    // deterministic seeded layout (small Fruchterman–Reingold)
-    let s=20260618;
-    const rand=()=>{s=(s*1103515245+12345)>>>0; return (s%10000)/10000;};
-    const n=TRIS.length, pos=Array.from({length:n},(_,i)=>{
-      const a=2*Math.PI*i/n; return {x:Math.cos(a)*40+rand()*6, y:Math.sin(a)*40+rand()*6};});
-    const k=42, area=300;
-    for(let it=0;it<400;it++){
-      const disp=pos.map(()=>({x:0,y:0}));
-      for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
-        let dx=pos[i].x-pos[j].x, dy=pos[i].y-pos[j].y; let d=Math.hypot(dx,dy)||0.01;
-        const f=k*k/d; dx/=d; dy/=d;
-        disp[i].x+=dx*f; disp[i].y+=dy*f; disp[j].x-=dx*f; disp[j].y-=dy*f;
-      }
-      for(const [a,b] of E){
-        let dx=pos[a].x-pos[b].x, dy=pos[a].y-pos[b].y; let d=Math.hypot(dx,dy)||0.01;
-        const f=d*d/k; dx/=d; dy/=d;
-        disp[a].x-=dx*f; disp[a].y-=dy*f; disp[b].x+=dx*f; disp[b].y+=dy*f;
-      }
-      const t=area*(1-it/400)/40+0.5;
-      for(let i=0;i<n;i++){ let dl=Math.hypot(disp[i].x,disp[i].y)||0.01;
-        pos[i].x+=disp[i].x/dl*Math.min(dl,t); pos[i].y+=disp[i].y/dl*Math.min(dl,t);
-        pos[i].x*=0.999; pos[i].y*=0.999; }
-    }
-    // normalize to viewBox
-    const xs=pos.map(p=>p.x), ys=pos.map(p=>p.y);
-    const minx=Math.min(...xs),maxx=Math.max(...xs),miny=Math.min(...ys),maxy=Math.max(...ys);
-    const pad=34, span=Math.max(maxx-minx,maxy-miny)||1, scale=(320-2*pad)/span;
-    const ox=(320-(maxx-minx)*scale)/2, oy=(320-(maxy-miny)*scale)/2;
-    const P=pos.map(p=>[ox+(p.x-minx)*scale, oy+(p.y-miny)*scale]);
-    return {E,P};
-  }
-  const graphL=document.getElementById('graphLayer');
-  (function drawGraph(){
-    const {E,P}=buildGraph();
-    for(const [a,b] of E) graphL.appendChild(seg(P[a],P[b],'#C2693F',1.1,.45));
-    for(const p of P){const c=document.createElementNS(NS,'circle');
-      c.setAttribute('cx',p[0]);c.setAttribute('cy',p[1]);c.setAttribute('r','5');
-      c.setAttribute('fill','#FAF6EE');c.setAttribute('stroke','#C2693F');c.setAttribute('stroke-width','1.6');
-      graphL.appendChild(c);}
-  })();
-
-  // ---- step driver ----
-  const captions=['a hexagon','one triangulation','a single flip','all 14 triangulations','14 vertices · 21 edges'];
-  const caption=document.getElementById('caption');
-  let cycleTimer=null, cyc=0;
-  function stopCycle(){ if(cycleTimer){clearInterval(cycleTimer); cycleTimer=null;} }
-  function showGraph(on){
-    polyL.style.opacity = on? '0':'1';
-    graphL.style.opacity = on? '1':'0';
-  }
-  function setStep(n){
-    stopCycle(); showGraph(false);
-    caption.textContent = captions[n] || '';
-    if(n===0) drawPoly(null);
-    else if(n===1) drawPoly(fanIdx);
-    else if(n===2) drawPoly(neighbourIdx, addedKey);
-    else if(n===3){ cyc=0; drawPoly(0);
-      cycleTimer=setInterval(()=>{ cyc=(cyc+1)%TRIS.length; drawPoly(cyc);
-        caption.textContent = (cyc+1)+' / '+TRIS.length; }, 850); }
-    else if(n===4){ showGraph(true); }
-  }
-  setStep(0);
-
-  const steps=[...document.querySelectorAll('.step')];
-  let current=0;
-  const io=new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        const n=+e.target.dataset.step;
-        steps.forEach(s=>s.classList.toggle('active', s===e.target));
-        if(n!==current){ current=n; setStep(n); }
-      }
-    });
-  }, {rootMargin:'-45% 0px -45% 0px', threshold:0});
-  steps.forEach(s=>io.observe(s));
-</script>
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 </body>
 </html>
