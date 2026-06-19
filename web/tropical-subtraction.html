@@ -128,14 +128,12 @@
         <svg id="stageA" viewBox="0 0 320 320" aria-hidden="true"></svg>
         <svg id="stageB" viewBox="0 0 320 320" aria-hidden="true" style="opacity:0"></svg>
       </div>
-      <div class="eq" id="eq"></div>
     </div>
 
     <!-- steps -->
     <div class="steps" id="steps">
       <div class="step" data-step="0">
         <div class="card">
-          <div class="num">01</div>
           <h3>Start with an integral</h3>
           <p>To turn quantum field theory into a number — a cross-section, a decay rate — we
             evaluate Feynman integrals. Take a one-loop box — four propagators closing into a
@@ -144,7 +142,6 @@
       </div>
       <div class="step" data-step="1">
         <div class="card">
-          <div class="num">02</div>
           <h3>Trade momenta for parameters</h3>
           <p>Rather than integrate over the loop momentum, rewrite the integral over
             <em>Feynman parameters</em> — one per propagator — living on a simplex. The whole
@@ -153,7 +150,6 @@
       </div>
       <div class="step" data-step="2">
         <div class="card">
-          <div class="num">03</div>
           <h3>Where the infinities hide</h3>
           <p>The divergences are not scattered everywhere. They sit on the <em>boundary</em> of
             the simplex, where Feynman parameters vanish. Work in <em>d</em>&nbsp;=&nbsp;4&nbsp;&minus;&nbsp;2&epsilon;
@@ -162,7 +158,6 @@
       </div>
       <div class="step" data-step="3">
         <div class="card">
-          <div class="num">04</div>
           <h3>A polytope appears</h3>
           <p>Which boundaries diverge, and how badly? The answer is combinatorial. Collect the
             exponents of the Symanzik polynomials as lattice points, take their convex hull, and
@@ -171,7 +166,6 @@
       </div>
       <div class="step" data-step="4">
         <div class="card">
-          <div class="num">05</div>
           <h3>Subtract a facet</h3>
           <p>Each facet of the Newton polytope is one way the integral diverges. The scheme
             subtracts a counterterm for it — geometrically, peel that facet off. What remains
@@ -180,7 +174,6 @@
       </div>
       <div class="step" data-step="5">
         <div class="card">
-          <div class="num">06</div>
           <h3>Subtract another</h3>
           <p>A neighbouring facet diverges too, so subtract its counterterm as well. But along
             the edge where the two facets meet, that overlap has now been removed
@@ -189,7 +182,6 @@
       </div>
       <div class="step" data-step="6">
         <div class="card">
-          <div class="num">07</div>
           <h3>Add back the overlap</h3>
           <p>Inclusion–exclusion fixes it: add back their common edge — the piece counted
             twice. Carry on down the face lattice and every divergence is removed exactly once.
@@ -198,17 +190,6 @@
       </div>
       <div class="step" data-step="7">
         <div class="card">
-          <div class="num">08</div>
-          <h3>SubTropica</h3>
-          <p>Run the pipeline and the poles drop out as a Laurent series in &epsilon;,
-            coefficient by coefficient. <strong>SubTropica</strong> wraps it into a Mathematica
-            package: hand it a Feynman integral, get back its &epsilon;-expansion — tropical
-            geometry doing the bookkeeping.</p>
-        </div>
-      </div>
-      <div class="step" data-step="8">
-        <div class="card">
-          <div class="num">09</div>
           <h3>Try it yourself</h3>
           <p>SubTropica is open and documented. Point it at your own integral and watch the
             &epsilon;-expansion come back — no tropical bookkeeping by hand.</p>
@@ -295,12 +276,6 @@
     add(line(TB,TC,{stroke:C_CLAY,w:2}));
     add(line(TC,TA,{stroke:C_CLAY,w:2}));
     [TA,TB,TC,TD].forEach(v=>add(dot(v,3.6,C_DEEP)));
-    if(labels){
-      add(txt([146,54],'x₁',LBL));
-      add(txt([46,262],'x₂',LBL));
-      add(txt([284,242],'x₃',LBL));
-      add(txt([196,182],'x₄',LBL));
-    }
   }
 
   // 01 — one-loop box
@@ -339,7 +314,6 @@
       add(dot(v,9,C_CLAY,{opacity:0.30}));
       add(dot(v,4,C_DEEP));
     });
-    add(txt([160,300],'xᵢ → 0',LBL));
   }
 
   // Newton polytope of U·F for the massless box, U=Σxᵢ, F=(−s)x₁x₃+(−t)x₂x₄.
@@ -405,13 +379,10 @@
       let dx=fcx-cenX, dy=fcy-cenY; const L=Math.hypot(dx,dy)||1; dx=dx/L*22; dy=dy/L*22;
       add(poly(pts.map(p=>[p[0]+dx,p[1]+dy]),{fill:C_CLAY,opacity:0.5,stroke:C_DEEP,'stroke-width':1.4,'stroke-dasharray':'4 3','stroke-linejoin':'round'}));
     });
-    // added (common) edge — lifted "a bit" off the solid (no + sign in the figure)
+    // added (common) edge — bold, in place on the solid (no + sign in the figure)
     if(addE){ const s=seg(addE);
-      const mx=(s[0][0]+s[1][0])/2, my=(s[0][1]+s[1][1])/2;
-      let dx=mx-cenX, dy=my-cenY; const L=Math.hypot(dx,dy)||1; dx=dx/L*12; dy=dy/L*12;
-      const a=[s[0][0]+dx,s[0][1]+dy], b=[s[1][0]+dx,s[1][1]+dy];
-      add(line(a,b,{stroke:C_DEEP,w:9,op:0.22}));
-      add(line(a,b,{stroke:C_DEEP,w:3}));
+      add(line(s[0],s[1],{stroke:C_DEEP,w:9,op:0.22}));
+      add(line(s[0],s[1],{stroke:C_DEEP,w:3}));
     }
   }
   function drawNewton(){ clear(); drawPoly(); }
@@ -447,12 +418,9 @@
   }
   function setEq(h){ document.getElementById('eq').innerHTML='<span class="eqrow">'+h+'</span>'; }
   const OPM=' − ', OPP=' + ';
-  function drawSub1(){ clear(); drawPoly({subFacets:[FAC1]});
-    setEq(eqHTML([{op:OPM,hi:{facet:FAC1},cls:'sub'}])); }
-  function drawSub2(){ clear(); drawPoly({subFacets:[FAC1,FAC2]});
-    setEq(eqHTML([{op:OPM,hi:{facet:FAC1},cls:'sub'},{op:OPM,hi:{facet:FAC2},cls:'sub'}])); }
-  function drawSub3(){ clear(); drawPoly({subFacets:[FAC1,FAC2],addEdge:CEDGE});
-    setEq(eqHTML([{op:OPM,hi:{facet:FAC1},cls:'sub'},{op:OPM,hi:{facet:FAC2},cls:'sub'},{op:OPP,hi:{edge:CEDGE},cls:'add'}])); }
+  function drawSub1(){ clear(); drawPoly({subFacets:[FAC1]}); }
+  function drawSub2(){ clear(); drawPoly({subFacets:[FAC1,FAC2]}); }
+  function drawSub3(){ clear(); drawPoly({subFacets:[FAC1,FAC2],addEdge:CEDGE}); }
 
   // a clickable pill linking out to the package site
   const SUB_URL='https://subtropica.org';
@@ -538,14 +506,12 @@
     ()=>drawSub1(),
     ()=>drawSub2(),
     ()=>drawSub3(),
-    ()=>drawResult(),
     ()=>drawFinal()
   ];
   // draw the first figure into layer A (no fade); later steps cross-fade in
   stage=layerA; (draws[0])(); layerA.style.opacity='1'; layerB.style.opacity='0';
   front=layerA; back=layerB;
   function setStep(n){
-    document.getElementById('eq').innerHTML='';   // the equation is per-step (set by drawSub*)
     stage=back; (draws[n] || draws[0])();    // render into the hidden layer …
     back.style.opacity='1'; front.style.opacity='0';
     const tmp=front; front=back; back=tmp;   // … then cross-fade it to the front
