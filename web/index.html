@@ -183,26 +183,26 @@
     .mini-panel:hover .fig-dual .dGrpB{ animation:dGrpB 12s ease-in-out infinite alternate; }
     .mini-panel:hover .fig-dual .dGrpC{ animation:dGrpC 12s ease-in-out infinite alternate; }
     .mini-panel:hover .fig-dual .dGrpD{ animation:dGrpD 12s ease-in-out infinite alternate; }
-    @keyframes dAmpL{ 0%,7%{opacity:1} 16%,100%{opacity:0} }
-    @keyframes dGooFade{ 0%,20%{opacity:1} 27%,100%{opacity:0} }
-    @keyframes dBlobMain{ 0%,9%{transform:scale(1)} 22%,100%{transform:scale(0)} }
-    @keyframes dDrop1{ 0%,9%{transform:translate(0,0)} 22%,100%{transform:translate(24px,-26px)} }
-    @keyframes dDrop2{ 0%,9%{transform:translate(0,0)} 22%,100%{transform:translate(24px,26px)} }
-    @keyframes dDrop3{ 0%,9%{transform:translate(0,0)} 22%,100%{transform:translate(-24px,26px)} }
-    @keyframes dDrop4{ 0%,9%{transform:translate(0,0)} 22%,100%{transform:translate(-24px,-26px)} }
-    @keyframes dStageB{ 0%,18%{opacity:0} 25%{opacity:1} 36%{opacity:1} 44%,100%{opacity:0} }
+    @keyframes dAmpL{ 0%,1%{opacity:1} 9%,100%{opacity:0} }
+    @keyframes dGooFade{ 0%,13%{opacity:1} 19%,100%{opacity:0} }
+    @keyframes dBlobMain{ 0%,1%{transform:scale(1)} 15%,100%{transform:scale(0)} }
+    @keyframes dDrop1{ 0%,1%{transform:translate(0,0)} 15%,100%{transform:translate(24px,-26px)} }
+    @keyframes dDrop2{ 0%,1%{transform:translate(0,0)} 15%,100%{transform:translate(24px,26px)} }
+    @keyframes dDrop3{ 0%,1%{transform:translate(0,0)} 15%,100%{transform:translate(-24px,26px)} }
+    @keyframes dDrop4{ 0%,1%{transform:translate(0,0)} 15%,100%{transform:translate(-24px,-26px)} }
+    @keyframes dStageB{ 0%,11%{opacity:0} 17%{opacity:1} 22%{opacity:1} 30%,100%{opacity:0} }
     /* diagram melts into a complete triangle at its corner, then the triangle flies in to join */
-    @keyframes dTriF1{ 0%,38%{opacity:0; transform:translate(5.8px,-15.5px) scale(.6)} 46%{opacity:1; transform:translate(5.8px,-15.5px) scale(1)} 58%,100%{opacity:1; transform:translate(0,0) scale(1)} }
-    @keyframes dTriF2{ 0%,38%{opacity:0; transform:translate(5.8px,26px) scale(.6)} 46%{opacity:1; transform:translate(5.8px,26px) scale(1)} 58%,100%{opacity:1; transform:translate(0,0) scale(1)} }
-    @keyframes dTriF3{ 0%,38%{opacity:0; transform:translate(-5.8px,26px) scale(.6)} 46%{opacity:1; transform:translate(-5.8px,26px) scale(1)} 58%,100%{opacity:1; transform:translate(0,0) scale(1)} }
-    @keyframes dTriF4{ 0%,38%{opacity:0; transform:translate(-5.8px,-15.5px) scale(.6)} 46%{opacity:1; transform:translate(-5.8px,-15.5px) scale(1)} 58%,100%{opacity:1; transform:translate(0,0) scale(1)} }
-    @keyframes dDual{ 0%,60%{opacity:0} 68%,100%{opacity:1} }
-    /* the internal diagonal half-edges fade once the dual is in place */
-    @keyframes dDiagFade{ 0%,70%{opacity:1} 76%,100%{opacity:0} }
-    @keyframes dGrpA{ 0%,80%{opacity:0} 84%,100%{opacity:1} }
-    @keyframes dGrpB{ 0%,83%{opacity:0} 87%,100%{opacity:1} }
-    @keyframes dGrpC{ 0%,86%{opacity:0} 90%,100%{opacity:1} }
-    @keyframes dGrpD{ 0%,89%{opacity:0} 93%,100%{opacity:1} }
+    @keyframes dTriF1{ 0%,24%{opacity:0; transform:translate(5.8px,-15.5px) scale(.6)} 33%{opacity:1; transform:translate(5.8px,-15.5px) scale(1)} 48%,100%{opacity:1; transform:translate(0,0) scale(1)} }
+    @keyframes dTriF2{ 0%,24%{opacity:0; transform:translate(5.8px,26px) scale(.6)} 33%{opacity:1; transform:translate(5.8px,26px) scale(1)} 48%,100%{opacity:1; transform:translate(0,0) scale(1)} }
+    @keyframes dTriF3{ 0%,24%{opacity:0; transform:translate(-5.8px,26px) scale(.6)} 33%{opacity:1; transform:translate(-5.8px,26px) scale(1)} 48%,100%{opacity:1; transform:translate(0,0) scale(1)} }
+    @keyframes dTriF4{ 0%,24%{opacity:0; transform:translate(-5.8px,-15.5px) scale(.6)} 33%{opacity:1; transform:translate(-5.8px,-15.5px) scale(1)} 48%,100%{opacity:1; transform:translate(0,0) scale(1)} }
+    @keyframes dDual{ 0%,52%{opacity:0} 60%,100%{opacity:1} }
+    /* the internal diagonal half-edges fade out as the dual fades in — simultaneously */
+    @keyframes dDiagFade{ 0%,52%{opacity:1} 60%,100%{opacity:0} }
+    @keyframes dGrpA{ 0%,66%{opacity:0} 71%,100%{opacity:1} }
+    @keyframes dGrpB{ 0%,69%{opacity:0} 74%,100%{opacity:1} }
+    @keyframes dGrpC{ 0%,72%{opacity:0} 77%,100%{opacity:1} }
+    @keyframes dGrpD{ 0%,75%{opacity:0} 80%,100%{opacity:1} }
   }
 
   /* links grid */
@@ -401,24 +401,24 @@
             </defs>
             <g class="dAmpL">
               <g stroke="#C2693F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
-                <line x1="60" y1="60" x2="30" y2="28"/><line x1="60" y1="60" x2="90" y2="28"/>
-                <line x1="60" y1="60" x2="90" y2="92"/><line x1="60" y1="60" x2="30" y2="92"/>
+                <line x1="60" y1="60" x2="23.4" y2="21"/><line x1="60" y1="60" x2="96.6" y2="21"/>
+                <line x1="60" y1="60" x2="96.6" y2="99"/><line x1="60" y1="60" x2="23.4" y2="99"/>
                 <!-- 2 → 2: incoming tips and outgoing tails sit ~0.7 along each leg -->
-                <path d="M-4,-3.5 L0,0 L-4,3.5" transform="translate(39.0,37.6) rotate(46.8)"/>
-                <path d="M-4,-3.5 L0,0 L-4,3.5" transform="translate(39.0,82.4) rotate(-46.8)"/>
-                <path d="M-4,-3.5 L0,0 L-4,3.5" transform="translate(84.9,33.4) rotate(-46.8)"/>
-                <path d="M-4,-3.5 L0,0 L-4,3.5" transform="translate(84.9,86.6) rotate(46.8)"/>
+                <path d="M-4,-3.5 L0,0 L-4,3.5" transform="translate(34.4,32.7) rotate(46.8)"/>
+                <path d="M-4,-3.5 L0,0 L-4,3.5" transform="translate(34.4,87.3) rotate(-46.8)"/>
+                <path d="M-4,-3.5 L0,0 L-4,3.5" transform="translate(89.8,28.2) rotate(-46.8)"/>
+                <path d="M-4,-3.5 L0,0 L-4,3.5" transform="translate(89.8,91.8) rotate(46.8)"/>
               </g>
             </g>
             <g class="dGoo" filter="url(#dgoo)" fill="#EFE0D2">
-              <circle class="dBlobMain" cx="60" cy="60" r="21"/>
-              <circle class="dDrop d1" cx="60" cy="60" r="9"/>
-              <circle class="dDrop d2" cx="60" cy="60" r="9"/>
-              <circle class="dDrop d3" cx="60" cy="60" r="9"/>
-              <circle class="dDrop d4" cx="60" cy="60" r="9"/>
+              <circle class="dBlobMain" cx="60" cy="60" r="26"/>
+              <circle class="dDrop d1" cx="60" cy="60" r="10"/>
+              <circle class="dDrop d2" cx="60" cy="60" r="10"/>
+              <circle class="dDrop d3" cx="60" cy="60" r="10"/>
+              <circle class="dDrop d4" cx="60" cy="60" r="10"/>
             </g>
             <g class="dAmpL">
-              <circle cx="60" cy="60" r="21" fill="none" stroke="#C2693F" stroke-width="2"/>
+              <circle cx="60" cy="60" r="26" fill="none" stroke="#C2693F" stroke-width="2"/>
             </g>
 
             <!-- Stage B: four distinct two-loop, four-point diagrams, scattered -->
@@ -497,18 +497,18 @@
             </g>
 
             <!-- Stage E: Monte-Carlo sampling points -->
-            <g class="dGrpA" fill="#A8542F">
-              <circle cx="50.3" cy="38.4" r="2.2"/><circle cx="36.3" cy="34.7" r="2.2"/>
-              <circle cx="49.8" cy="65.3" r="2.2"/><circle cx="78.7" cy="87.5" r="2.2"/>
+            <g class="dGrpA" fill="#C2693F">
+              <circle cx="50.3" cy="38.4" r="1.8"/><circle cx="36.3" cy="34.7" r="1.8"/>
+              <circle cx="49.8" cy="65.3" r="1.8"/><circle cx="78.7" cy="87.5" r="1.8"/>
             </g>
-            <g class="dGrpB" fill="#2A2521">
-              <circle cx="68.3" cy="33.5" r="2.2"/><circle cx="55.8" cy="80.2" r="2.2"/><circle cx="76.2" cy="72.3" r="2.2"/>
+            <g class="dGrpB" fill="#C2693F">
+              <circle cx="68.3" cy="33.5" r="1.8"/><circle cx="55.8" cy="80.2" r="1.8"/><circle cx="76.2" cy="72.3" r="1.8"/>
             </g>
             <g class="dGrpC" fill="#C2693F">
-              <circle cx="62" cy="51.7" r="2.2"/><circle cx="67" cy="87.7" r="2.2"/><circle cx="86.4" cy="36.4" r="2.2"/>
+              <circle cx="62" cy="51.7" r="1.8"/><circle cx="67" cy="87.7" r="1.8"/><circle cx="86.4" cy="36.4" r="1.8"/>
             </g>
-            <g class="dGrpD" fill="#6E6358">
-              <circle cx="35.7" cy="60.5" r="2.2"/><circle cx="79.7" cy="47" r="2.2"/><circle cx="34.6" cy="70.4" r="2.2"/>
+            <g class="dGrpD" fill="#C2693F">
+              <circle cx="35.7" cy="60.5" r="1.8"/><circle cx="79.7" cy="47" r="1.8"/><circle cx="34.6" cy="70.4" r="1.8"/>
             </g>
           </svg>
         </div>
